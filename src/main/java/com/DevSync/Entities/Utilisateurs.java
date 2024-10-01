@@ -3,6 +3,7 @@ package com.DevSync.Entities;
 
 import jakarta.persistence.*;
 
+
 @Entity
 @Table(name="utilisateurs",
     uniqueConstraints={@UniqueConstraint(columnNames={"id"})})
