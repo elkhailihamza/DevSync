@@ -1,18 +1,29 @@
 package com.DevSync.Entities;
 
-public class Tags {
-    private final long id;
-    private String tag_name;
-    private long task_id;
+import jakarta.persistence.*;
 
-    public Tags(long id, String tag_name, long task_id) {
-        this.id = id;
-        this.tag_name = tag_name;
-        this.task_id = task_id;
-    }
+@Entity
+@Table(name = "tag",
+uniqueConstraints = {@UniqueConstraint(columnNames = {"id"})})
+public class Tags {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id", nullable = false, unique = true)
+    private long id;
+
+    @Column(name = "tag_name", nullable = false)
+    private String tag_name;
+
+    @Column(name = "task_id", nullable = false)
+    private long task_id;
 
     public long getId() {
         return id;
+    }
+
+    public void setId(long id) {
+        this.id = id;
     }
 
     public String getTag_name() {

@@ -1,26 +1,41 @@
 package com.DevSync.Entities;
 
-public class Utilisateurs {
-    private final long id;
-    private String user_name;
-    private String user_pass;
-    private String nom;
-    private String prenom;
-    private String email;
-    private boolean manager;
 
-    public Utilisateurs(long id, String user_name, String user_pass, String nom, String prenom, String email, boolean manager) {
-        this.id = id;
-        this.user_name = user_name;
-        this.user_pass = user_pass;
-        this.nom = nom;
-        this.prenom = prenom;
-        this.email = email;
-        this.manager = manager;
-    }
+import jakarta.persistence.*;
+
+@Entity
+@Table(name="utilisateurs",
+    uniqueConstraints={@UniqueConstraint(columnNames={"id"})})
+public class Utilisateurs {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id", nullable = false, unique = true)
+    private long id;
+
+    @Column(name = "user_name", nullable = false)
+    private String user_name;
+
+    @Column(name = "user_pass", nullable = false)
+    private String user_pass;
+
+    @Column(name = "nom", nullable = false)
+    private String nom;
+
+    @Column(name = "prenom", nullable = false)
+    private String prenom;
+
+    @Column(name = "email", nullable = false, unique = true)
+    private String email;
+
+    @Column(name = "manager", nullable = false)
+    private boolean manager;
 
     public long getId() {
         return id;
+    }
+
+    public void setId(long id) {
+        this.id = id;
     }
 
     public String getUser_name() {

@@ -1,32 +1,47 @@
 package com.DevSync.Entities;
 
 import com.DevSync.Enums.Status;
+import jakarta.persistence.*;
 
 import java.time.LocalDate;
 
+@Entity
+@Table(name = "tasks",
+uniqueConstraints = {@UniqueConstraint(columnNames = {"id"})})
 public class Tasks {
-    private final long id;
-    private String title;
-    private String description;
-    private LocalDate createdAt;
-    private LocalDate dueDate;
-    private Status status;
-    private final long creator_id;
-    private long assignee_id;
 
-    public Tasks(long id, long creator_id, String title, String description, LocalDate createdAt, LocalDate dueDate, Status status, long assignee_id) {
-        this.id = id;
-        this.creator_id = creator_id;
-        this.title = title;
-        this.description = description;
-        this.createdAt = createdAt;
-        this.dueDate = dueDate;
-        this.status = status;
-        this.assignee_id = assignee_id;
-    }
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id", nullable = false, unique = true)
+    private long id;
+
+    @Column(name = "title", nullable = false)
+    private String title;
+
+    @Column(name = "description", nullable = false)
+    private String description;
+
+    @Column(name = "createdAt", nullable = false)
+    private LocalDate createdAt;
+
+    @Column(name = "dueDate", nullable = false)
+    private LocalDate dueDate;
+
+    @Column(name = "status", nullable = false)
+    private Status status;
+
+    @Column(name = "creator_id", nullable = false)
+    private long creator_id;
+
+    @Column(name = "assignee_id")
+    private long assignee_id;
 
     public long getId() {
         return id;
+    }
+
+    public void setId(long id) {
+        this.id = id;
     }
 
     public String getTitle() {
@@ -71,6 +86,10 @@ public class Tasks {
 
     public long getCreator_id() {
         return creator_id;
+    }
+
+    public void getCreator_id(long creator_id) {
+        this.creator_id = creator_id;
     }
 
     public long getAssignee_id() {

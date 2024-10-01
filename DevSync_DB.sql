@@ -32,6 +32,6 @@ CREATE TABLE IF NOT EXISTS tasks(
 CREATE TABLE IF NOT EXISTS tag(
 	id SERIAL PRIMARY KEY,
 	tag_name VARCHAR(255) NOT NULL,
-	task_id INT,
+	task_id INT NOT NULL,
     CONSTRAINT task_fk FOREIGN KEY (task_id) REFERENCES tasks(id)
 );
