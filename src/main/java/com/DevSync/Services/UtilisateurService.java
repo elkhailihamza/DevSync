@@ -2,11 +2,16 @@ package com.DevSync.Services;
 
 import com.DevSync.Entities.Utilisateurs;
 import com.DevSync.Repositories.UtilisateurRepository;
+import jakarta.enterprise.context.RequestScoped;
+import jakarta.inject.Inject;
 
 import java.util.List;
 
+@RequestScoped
 public class UtilisateurService {
-    public UtilisateurRepository utilisateurRepository;
+    private final UtilisateurRepository utilisateurRepository;
+
+    @Inject
     public UtilisateurService(UtilisateurRepository utilisateurRepository) {
         this.utilisateurRepository = utilisateurRepository;
     }

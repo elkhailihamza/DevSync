@@ -2,6 +2,8 @@ package com.DevSync.Repositories.implementations;
 
 import com.DevSync.Entities.Utilisateurs;
 import com.DevSync.Repositories.UtilisateurRepository;
+import jakarta.enterprise.context.RequestScoped;
+import jakarta.inject.Inject;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
@@ -9,9 +11,11 @@ import org.hibernate.query.Query;
 
 import java.util.List;
 
+@RequestScoped
 public class UtilisateurRepositoryImpl implements UtilisateurRepository {
     private final SessionFactory sessionFactory;
 
+    @Inject
     public UtilisateurRepositoryImpl(SessionFactory sessionFactory) {
         this.sessionFactory = sessionFactory;
     }
