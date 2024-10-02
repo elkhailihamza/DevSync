@@ -71,6 +71,7 @@ public class UtilisateurRepositoryImpl implements UtilisateurRepository {
             Query<Void> query = session.createQuery("DELETE FROM Utilisateurs WHERE id = :userId", Void.class);
             query.setParameter("userId", entity.getId());
             query.executeUpdate();
+            session.detach(entity);
             transaction.commit();
         } catch (Exception e) {
             if (transaction != null)

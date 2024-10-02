@@ -6,10 +6,5 @@ import jakarta.inject.Inject;
 
 @RequestScoped
 public class UtilisateurController extends Controller {
-    private final UtilisateurService utilisateurService;
 
-    @Inject
-    public UtilisateurController(UtilisateurService utilisateurService) {
-        this.utilisateurService = utilisateurService;
-    }
 }

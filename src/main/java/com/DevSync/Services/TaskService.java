@@ -2,12 +2,12 @@ package com.DevSync.Services;
 
 import com.DevSync.Entities.Tasks;
 import com.DevSync.Repositories.TaskRepository;
-import jakarta.enterprise.context.RequestScoped;
+import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 
 import java.util.List;
 
-@RequestScoped
+@ApplicationScoped
 public class TaskService {
     private final TaskRepository taskRepository;
 
