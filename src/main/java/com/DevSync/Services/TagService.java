@@ -3,18 +3,16 @@ package com.DevSync.Services;
 import com.DevSync.Entities.Tags;
 import com.DevSync.Repositories.TagRepository;
 import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.enterprise.context.RequestScoped;
 import jakarta.inject.Inject;
 
 import java.util.List;
 
 @ApplicationScoped
 public class TagService {
-    private final TagRepository tagRepository;
 
     @Inject
-    public TagService(TagRepository tagRepository) {
-        this.tagRepository = tagRepository;
-    }
+    private TagRepository tagRepository;
 
     public Tags findById(long id) {
         return tagRepository.findById(id);

@@ -2,7 +2,7 @@ package com.DevSync.Repositories.implementations;
 
 import com.DevSync.Entities.Utilisateurs;
 import com.DevSync.Repositories.UtilisateurRepository;
-import jakarta.enterprise.context.RequestScoped;
+import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -10,21 +10,23 @@ import org.hibernate.Transaction;
 import org.hibernate.query.Query;
 
 import java.util.List;
+import java.util.Objects;
 
-@RequestScoped
+@ApplicationScoped
 public class UtilisateurRepositoryImpl implements UtilisateurRepository {
-    private final SessionFactory sessionFactory;
 
     @Inject
-    public UtilisateurRepositoryImpl(SessionFactory sessionFactory) {
-        this.sessionFactory = sessionFactory;
-    }
+    private SessionFactory sessionFactory;
 
     @Override
     public Utilisateurs findById(Long id) {
         try (Session session = sessionFactory.openSession()) {
-            return session.get(Utilisateurs.class, id);
+            Utilisateurs user = session.get(Utilisateurs.class, id);
+            if (!Objects.equals(user, null)) {
+                return user;
+            }
         }
+        return null;
     }
 
     @Override
@@ -76,6 +78,28 @@ public class UtilisateurRepositoryImpl implements UtilisateurRepository {
         } catch (Exception e) {
             if (transaction != null)
                 transaction.rollback();
+        }
+    }
+
+    @Override
+    public Utilisateurs fetchUserByUsername(String username) {
+        try (Session session = sessionFactory.openSession()) {
+            Query<Utilisateurs> query = session.createQuery("FROM Utilisateurs WHERE user_name = :userName", Utilisateurs.class);
+            query.setParameter("userName", username);
+            return query.uniqueResult();
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    @Override
+    public Utilisateurs fetchUserByEmail(String email) {
+        try (Session session = sessionFactory.openSession()) {
+            Query<Utilisateurs> query = session.createQuery("FROM Utilisateurs WHERE email = :email", Utilisateurs.class);
+            query.setParameter("email", email);
+            return query.uniqueResult();
+        } catch (Exception e) {
+            return null;
         }
     }
 }

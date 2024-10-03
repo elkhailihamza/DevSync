@@ -20,6 +20,8 @@ public class HibernateUtil {
         try {
             Configuration configuration = new Configuration();
 
+            configuration.configure();
+
             configuration.addAnnotatedClass(Utilisateurs.class);
             configuration.addAnnotatedClass(Tasks.class);
             configuration.addAnnotatedClass(Tags.class);

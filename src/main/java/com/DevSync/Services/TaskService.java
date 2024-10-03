@@ -3,18 +3,16 @@ package com.DevSync.Services;
 import com.DevSync.Entities.Tasks;
 import com.DevSync.Repositories.TaskRepository;
 import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.enterprise.context.RequestScoped;
 import jakarta.inject.Inject;
 
 import java.util.List;
 
 @ApplicationScoped
 public class TaskService {
-    private final TaskRepository taskRepository;
 
     @Inject
-    public TaskService(TaskRepository taskRepository) {
-        this.taskRepository = taskRepository;
-    }
+    private TaskRepository taskRepository;
 
     public Tasks findById(long id) {
         return taskRepository.findById(id);

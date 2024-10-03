@@ -21,12 +21,13 @@ public class Tasks {
     @Column(name = "description", nullable = false)
     private String description;
 
-    @Column(name = "createdAt", nullable = false)
+    @Column(name = "createdat", nullable = false)
     private LocalDate createdAt;
 
-    @Column(name = "dueDate", nullable = false)
+    @Column(name = "duedate", nullable = false)
     private LocalDate dueDate;
 
+    @Enumerated(EnumType.STRING)
     @Column(name = "status", nullable = false)
     private Status status;
 

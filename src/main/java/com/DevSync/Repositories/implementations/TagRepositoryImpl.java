@@ -2,7 +2,7 @@ package com.DevSync.Repositories.implementations;
 
 import com.DevSync.Entities.Tags;
 import com.DevSync.Repositories.TagRepository;
-import jakarta.enterprise.context.RequestScoped;
+import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -11,14 +11,11 @@ import org.hibernate.query.Query;
 
 import java.util.List;
 
-@RequestScoped
+@ApplicationScoped
 public class TagRepositoryImpl implements TagRepository {
-    private final SessionFactory sessionFactory;
 
     @Inject
-    public TagRepositoryImpl(SessionFactory sessionFactory) {
-        this.sessionFactory = sessionFactory;
-    }
+    private SessionFactory sessionFactory;
 
     @Override
     public Tags findById(Long id) {

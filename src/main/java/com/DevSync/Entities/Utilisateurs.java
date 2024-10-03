@@ -1,8 +1,6 @@
 package com.DevSync.Entities;
 
-
 import jakarta.persistence.*;
-
 
 @Entity
 @Table(name="utilisateurs",
@@ -19,10 +17,10 @@ public class Utilisateurs {
     @Column(name = "user_pass", nullable = false)
     private String user_pass;
 
-    @Column(name = "nom", nullable = false)
+    @Column(name = "nom")
     private String nom;
 
-    @Column(name = "prenom", nullable = false)
+    @Column(name = "prenom")
     private String prenom;
 
     @Column(name = "email", nullable = false, unique = true)
