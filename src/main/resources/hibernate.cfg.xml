@@ -1,18 +1,11 @@
-<?xml version='1.0' encoding='utf-8'?>
+<?xml version="1.0" encoding="utf-8"?>
 <hibernate-configuration>
-<session-factory>
-    <!-- Database connection settings -->
-    <property name="hibernate.connection.driver_class">org.postgresql.Driver</property>
-    <property name="hibernate.connection.url">jdbc:postgresql://localhost:5432/DevSync</property>
-    <property name="hibernate.connection.username">root</property>
-    <property name="hibernate.connection.password">;(.314Luiv./</property>
-
-    <!-- Enable Hibernate's automatic session context management -->
-    <property name="hibernate.current_session_context_class">thread</property>
-
-    <!-- Specify annotated entity classes -->
-    <mapping class="com.DevSync.Entities.Utilisateurs" />
-    <mapping class="com.DevSync.Entities.Tasks" />
-    <mapping class="com.DevSync.Entities.Tags" />
-</session-factory>
+    <session-factory>
+        <property name="hibernate.dialect">org.hibernate.dialect.PostgreSQLDialect</property>
+        <property name="hibernate.connection.driver_class">org.postgresql.Driver</property>
+        <property name="hibernate.connection.url">jdbc:postgresql://localhost:5432/DevSync</property>
+        <property name="hibernate.connection.username">root</property>
+        <property name="hibernate.connection.password">;(.314Luiv./</property>
+        <property name="hibernate.hbm2ddl.auto">update</property>
+    </session-factory>
 </hibernate-configuration>

@@ -17,7 +17,7 @@ public class LoginServlet extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        request.getRequestDispatcher("/Jsp/login.jsp").forward(request, response);
+        request.getRequestDispatcher("/WEB-INF/Views/Auth/login.jsp").forward(request, response);
     }
 
     @Override
@@ -26,11 +26,11 @@ public class LoginServlet extends HttpServlet {
         String password = request.getParameter("password");
 
         if (utilisateurController.login(username, password)) {
-            request.setAttribute("Success", "register success");
+            request.setAttribute("successMessage", "Login Successful!");
             response.sendRedirect("index.jsp");
         } else {
             request.setAttribute("errorMessage", "Invalid username or password.");
-            request.getRequestDispatcher("Jsp/login.jsp").forward(request, response);
+            request.getRequestDispatcher("/WEB-INF/Views/Auth/login.jsp").forward(request, response);
         }
     }
 }

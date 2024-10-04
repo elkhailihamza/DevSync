@@ -17,7 +17,7 @@ public class RegisterServlet extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        request.getRequestDispatcher("/Jsp/register.jsp").forward(request, response);
+        request.getRequestDispatcher("/WEB-INF/Views/Auth/register.jsp").forward(request, response);
     }
 
     @Override
@@ -28,12 +28,11 @@ public class RegisterServlet extends HttpServlet {
         boolean isManager = "true".equals(request.getParameter("manager"));
 
         if (utilisateurController.register(username, email, password, isManager)) {
-            request.setAttribute("Success", "register success");
+            request.setAttribute("successMessage", "register success");
             response.sendRedirect("index.jsp");
         } else {
-            request.setAttribute("EmailAlreadyFound", "Email is Already In Use!");
-            request.setAttribute("Success", "register success");
-            request.getRequestDispatcher("/Jsp/register.jsp").forward(request, response);
+            request.setAttribute("errorMessage", "Email is Already In Use!");
+            request.getRequestDispatcher("/WEB-INF/Views/Auth/register.jsp").forward(request, response);
         }
     }
 }
