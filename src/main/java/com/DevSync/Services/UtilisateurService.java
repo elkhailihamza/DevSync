@@ -6,15 +6,13 @@ import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 
 import java.util.List;
+import java.util.Objects;
 
 @ApplicationScoped
 public class UtilisateurService {
-    private final UtilisateurRepository utilisateurRepository;
 
     @Inject
-    public UtilisateurService(UtilisateurRepository utilisateurRepository) {
-        this.utilisateurRepository = utilisateurRepository;
-    }
+    private UtilisateurRepository utilisateurRepository;
 
     public Utilisateurs findById(long id) {
         return utilisateurRepository.findById(id);
@@ -34,5 +32,27 @@ public class UtilisateurService {
 
     public void delete(Utilisateurs entity) {
         utilisateurRepository.delete(entity);
+    }
+
+    public Utilisateurs fetchUserByUsername(String username) {
+        return utilisateurRepository.fetchUserByUsername(username);
+    }
+
+    public boolean authenticate(String username, String password) {
+        Utilisateurs user = fetchUserByUsername(username);
+        if (!Objects.equals(user, null)) {
+            String userName = user.getUser_name();
+            String userPass = user.getUser_pass();
+            return userName.equals(username) && userPass.equals(password);
+        }
+        return false;
+    }
+
+    public Utilisateurs fetchUserByEmail(String email) {
+        return utilisateurRepository.fetchUserByEmail(email);
+    }
+
+    public boolean emailAlreadyExists(String email) {
+        return !Objects.equals(fetchUserByEmail(email), null);
     }
 }

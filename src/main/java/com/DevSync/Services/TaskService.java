@@ -9,12 +9,9 @@ import java.util.List;
 
 @ApplicationScoped
 public class TaskService {
-    private final TaskRepository taskRepository;
 
     @Inject
-    public TaskService(TaskRepository taskRepository) {
-        this.taskRepository = taskRepository;
-    }
+    private TaskRepository taskRepository;
 
     public Tasks findById(long id) {
         return taskRepository.findById(id);
@@ -34,5 +31,9 @@ public class TaskService {
 
     public void delete(Tasks entity) {
         taskRepository.delete(entity);
+    }
+
+    public List<Tasks> fetchUserCreatedTasks(long id) {
+        return taskRepository.fetchUserCreatedTasks(id);
     }
 }

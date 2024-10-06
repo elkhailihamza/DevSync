@@ -14,11 +14,12 @@ import com.DevSync.Entities.Tags;
 @ApplicationScoped
 public class HibernateUtil {
 
-    @ApplicationScoped
     @Produces
     private static SessionFactory buildSessionFactory() {
         try {
             Configuration configuration = new Configuration();
+
+            configuration.configure();
 
             configuration.addAnnotatedClass(Utilisateurs.class);
             configuration.addAnnotatedClass(Tasks.class);

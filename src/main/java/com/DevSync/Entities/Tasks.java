@@ -3,7 +3,7 @@ package com.DevSync.Entities;
 import com.DevSync.Enums.Status;
 import jakarta.persistence.*;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "tasks",
@@ -21,20 +21,23 @@ public class Tasks {
     @Column(name = "description", nullable = false)
     private String description;
 
-    @Column(name = "createdAt", nullable = false)
-    private LocalDate createdAt;
+    @Column(name = "createdat")
+    private LocalDateTime createdAt;
 
-    @Column(name = "dueDate", nullable = false)
-    private LocalDate dueDate;
+    @Column(name = "duedate")
+    private LocalDateTime dueDate;
 
+    @Enumerated(EnumType.STRING)
     @Column(name = "status", nullable = false)
     private Status status;
 
-    @Column(name = "creator_id", nullable = false)
-    private long creator_id;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "creator_id", nullable = false)
+    private Utilisateurs creator;
 
-    @Column(name = "assignee_id")
-    private long assignee_id;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "assignee_id")
+    private Utilisateurs assignee;
 
     public long getId() {
         return id;
@@ -60,19 +63,19 @@ public class Tasks {
         this.description = description;
     }
 
-    public LocalDate getCreatedAt() {
+    public LocalDateTime getCreatedAt() {
         return createdAt;
     }
 
-    public void setCreatedAt(LocalDate createdAt) {
+    public void setCreatedAt(LocalDateTime createdAt) {
         this.createdAt = createdAt;
     }
 
-    public LocalDate getDueDate() {
+    public LocalDateTime getDueDate() {
         return dueDate;
     }
 
-    public void setDueDate(LocalDate dueDate) {
+    public void setDueDate(LocalDateTime dueDate) {
         this.dueDate = dueDate;
     }
 
@@ -84,19 +87,19 @@ public class Tasks {
         this.status = status;
     }
 
-    public long getCreator_id() {
-        return creator_id;
+    public Utilisateurs getCreator() {
+        return creator;
     }
 
-    public void getCreator_id(long creator_id) {
-        this.creator_id = creator_id;
+    public void setCreator(Utilisateurs creator) {
+        this.creator = creator;
     }
 
-    public long getAssignee_id() {
-        return assignee_id;
+    public Utilisateurs getAssignee() {
+        return assignee;
     }
 
-    public void setAssignee_id(long assignee_id) {
-        this.assignee_id = assignee_id;
+    public void setAssignee_id(Utilisateurs assignee) {
+        this.assignee = assignee;
     }
 }

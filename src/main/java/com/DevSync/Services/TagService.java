@@ -9,12 +9,9 @@ import java.util.List;
 
 @ApplicationScoped
 public class TagService {
-    private final TagRepository tagRepository;
 
     @Inject
-    public TagService(TagRepository tagRepository) {
-        this.tagRepository = tagRepository;
-    }
+    private TagRepository tagRepository;
 
     public Tags findById(long id) {
         return tagRepository.findById(id);
