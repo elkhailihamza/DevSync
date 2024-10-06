@@ -1,7 +1,6 @@
 <%
-  Boolean hasSuccess = (Boolean) request.getAttribute("hasSuccess");
   String successMessage = (String) request.getAttribute("successMessage");
-  if (Boolean.TRUE.equals(hasSuccess) && successMessage != null) {%>
+  if (successMessage != null && !successMessage.isEmpty()) {%>
 <p style="color: green;"><%= successMessage %></p>
 <%
   }

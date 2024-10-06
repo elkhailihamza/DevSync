@@ -29,7 +29,8 @@ public class RegisterServlet extends HttpServlet {
 
         if (utilisateurController.register(username, email, password, isManager)) {
             request.setAttribute("successMessage", "register success");
-            response.sendRedirect("index.jsp");
+            utilisateurController.login(username, password);
+            response.sendRedirect(request.getContextPath()+"/home");
         } else {
             request.setAttribute("errorMessage", "Email is Already In Use!");
             request.getRequestDispatcher("/WEB-INF/Views/Auth/register.jsp").forward(request, response);

@@ -7,6 +7,7 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 
 import java.io.IOException;
 
@@ -17,7 +18,8 @@ public class LoginServlet extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        request.getRequestDispatcher("/WEB-INF/Views/Auth/login.jsp").forward(request, response);
+        request.setAttribute("contentPage", "/WEB-INF/Views/Auth/login.jsp");
+        request.getRequestDispatcher("/WEB-INF/app.jsp").forward(request, response);
     }
 
     @Override
@@ -27,7 +29,7 @@ public class LoginServlet extends HttpServlet {
 
         if (utilisateurController.login(username, password)) {
             request.setAttribute("successMessage", "Login Successful!");
-            response.sendRedirect("index.jsp");
+            response.sendRedirect(request.getContextPath()+"/home");
         } else {
             request.setAttribute("errorMessage", "Invalid username or password.");
             request.getRequestDispatcher("/WEB-INF/Views/Auth/login.jsp").forward(request, response);

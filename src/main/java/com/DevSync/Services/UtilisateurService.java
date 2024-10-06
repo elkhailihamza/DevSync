@@ -43,8 +43,6 @@ public class UtilisateurService {
         if (!Objects.equals(user, null)) {
             String userName = user.getUser_name();
             String userPass = user.getUser_pass();
-            System.out.println("Username: " + username);
-            System.out.println("Password: " + password);
             return userName.equals(username) && userPass.equals(password);
         }
         return false;
@@ -55,9 +53,6 @@ public class UtilisateurService {
     }
 
     public boolean emailAlreadyExists(String email) {
-        Utilisateurs user = fetchUserByEmail(email);
-        System.out.println("Email: " + email);
-        System.out.println("Email: " + user);
-        return !Objects.equals(user, null);
+        return !Objects.equals(fetchUserByEmail(email), null);
     }
 }

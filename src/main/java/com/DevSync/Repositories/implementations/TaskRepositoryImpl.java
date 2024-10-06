@@ -72,4 +72,13 @@ public class TaskRepositoryImpl implements TaskRepository {
                 transaction.rollback();
         }
     }
+
+    @Override
+    public List<Tasks> fetchUserCreatedTasks(long id) {
+        try (Session session = sessionFactory.openSession()) {
+            Query<Tasks> query = session.createQuery("FROM Tasks WHERE creator.id = :creatorId", Tasks.class);
+            query.setParameter("creatorId", id);
+            return query.list();
+        }
+    }
 }

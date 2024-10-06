@@ -2,6 +2,8 @@ package com.DevSync.Entities;
 
 import jakarta.persistence.*;
 
+import java.util.List;
+
 @Entity
 @Table(name="utilisateurs",
     uniqueConstraints={@UniqueConstraint(columnNames={"id"})})
@@ -28,6 +30,12 @@ public class Utilisateurs {
 
     @Column(name = "manager", nullable = false)
     private boolean manager;
+
+    @OneToMany(mappedBy = "creator", cascade = CascadeType.ALL)
+    private List<Tasks> createdTasks;
+
+    @OneToMany(mappedBy = "assignee", cascade = CascadeType.ALL)
+    private List<Tasks> assignedTasks;
 
     public long getId() {
         return id;
@@ -83,5 +91,21 @@ public class Utilisateurs {
 
     public void setManager(boolean manager) {
         this.manager = manager;
+    }
+
+    public List<Tasks> getCreatedTasks() {
+        return createdTasks;
+    }
+
+    public void setCreatedTasks(List<Tasks> createdTasks) {
+        this.createdTasks = createdTasks;
+    }
+
+    public List<Tasks> getAssignedTasks() {
+        return assignedTasks;
+    }
+
+    public void setAssignedTasks(List<Tasks> assignedTasks) {
+        this.assignedTasks = assignedTasks;
     }
 }

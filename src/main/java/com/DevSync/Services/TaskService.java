@@ -32,4 +32,8 @@ public class TaskService {
     public void delete(Tasks entity) {
         taskRepository.delete(entity);
     }
+
+    public List<Tasks> fetchUserCreatedTasks(long id) {
+        return taskRepository.fetchUserCreatedTasks(id);
+    }
 }

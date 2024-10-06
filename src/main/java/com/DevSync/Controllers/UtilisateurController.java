@@ -9,8 +9,12 @@ public class UtilisateurController extends Controller {
 
     public boolean login(String username, String password) {
         if (utilisateurService.authenticate(username, password)) {
+            Utilisateurs user = utilisateurService.fetchUserByUsername(username);
+
             HttpSession session = request.getSession(true);
-            session.setAttribute("username", username);
+            session.setAttribute("userId", user.getId());
+            session.setAttribute("username", user.getUser_name());
+            session.setAttribute("user", user);
             return true;
         }
         return false;
@@ -31,6 +35,10 @@ public class UtilisateurController extends Controller {
             }
         }
         return false;
+    }
+
+    public Utilisateurs currentUser(String username) {
+        return utilisateurService.fetchUserByUsername(username);
     }
 
 }

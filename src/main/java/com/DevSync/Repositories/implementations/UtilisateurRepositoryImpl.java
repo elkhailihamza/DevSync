@@ -21,12 +21,8 @@ public class UtilisateurRepositoryImpl implements UtilisateurRepository {
     @Override
     public Utilisateurs findById(Long id) {
         try (Session session = sessionFactory.openSession()) {
-            Utilisateurs user = session.get(Utilisateurs.class, id);
-            if (!Objects.equals(user, null)) {
-                return user;
-            }
+            return session.get(Utilisateurs.class, id);
         }
-        return null;
     }
 
     @Override
