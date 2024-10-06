@@ -3,7 +3,7 @@
 
     if (errorMessage != null && !errorMessage.isEmpty()) {
 %>
-<p style="color: red;"><%= errorMessage %></p>
+<p class="bg-red-400"><%= errorMessage %></p>
 <%
     }
 %>

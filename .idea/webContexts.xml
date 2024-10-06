@@ -5,6 +5,7 @@
       <map>
         <entry key="file://$PROJECT_DIR$/src/main/webapp/Jsp/Auth/login.jsp" value="file://$PROJECT_DIR$/src/main/webapp/Jsp/Auth" />
         <entry key="file://$PROJECT_DIR$/src/main/webapp/WEB-INF/Views/Task/TaskList.jsp" value="file://$PROJECT_DIR$/src/main/webapp/WEB-INF/Views/Task" />
+        <entry key="file://$PROJECT_DIR$/src/main/webapp/WEB-INF/Views/Task/TaskUpdate.jsp" value="file://$PROJECT_DIR$/src/main/webapp/WEB-INF/Views/Task" />
         <entry key="file://$PROJECT_DIR$/src/main/webapp/test.jsp" value="file://$PROJECT_DIR$/src/main/webapp" />
       </map>
     </option>
