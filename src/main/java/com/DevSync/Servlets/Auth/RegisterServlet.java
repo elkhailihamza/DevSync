@@ -17,7 +17,8 @@ public class RegisterServlet extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        request.getRequestDispatcher("/WEB-INF/Views/Auth/register.jsp").forward(request, response);
+        request.setAttribute("contentPage", "/WEB-INF/Views/Auth/register.jsp");
+        request.getRequestDispatcher("/WEB-INF/app.jsp").forward(request, response);
     }
 
     @Override

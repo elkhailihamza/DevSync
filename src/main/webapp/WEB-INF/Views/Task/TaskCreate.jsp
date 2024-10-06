@@ -17,7 +17,7 @@
         <div class="mb-4">
             <label class="grid gap-4">
                 <span class="bold">Description<span class="text-red-900">*</span></span>
-                <textarea name="task_description" class="border p-2" placeholder="What should be done?" required></textarea>
+                <textarea name="task_description" class="border p-2" placeholder="What should be done?"></textarea>
             </label>
         </div>
         <div class="mb-4">

@@ -4,6 +4,8 @@ import com.DevSync.Entities.Utilisateurs;
 import jakarta.enterprise.context.RequestScoped;
 import jakarta.servlet.http.HttpSession;
 
+import java.util.List;
+
 @RequestScoped
 public class UtilisateurController extends Controller {
 
@@ -15,6 +17,7 @@ public class UtilisateurController extends Controller {
             session.setAttribute("userId", user.getId());
             session.setAttribute("username", user.getUser_name());
             session.setAttribute("user", user);
+            session.setAttribute("isManager", String.valueOf(user.isManager()));
             return true;
         }
         return false;
@@ -41,4 +44,19 @@ public class UtilisateurController extends Controller {
         return utilisateurService.fetchUserByUsername(username);
     }
 
+    public void updateUser(Utilisateurs user) {
+        utilisateurService.update(user);
+    }
+
+    public List<Utilisateurs> getAllUsers() {
+        return utilisateurService.fetchAll();
+    }
+
+    public Utilisateurs getCertainUser(long id) {
+        return utilisateurService.findById(id);
+    }
+
+    public void deleteUser(Utilisateurs user) {
+        utilisateurService.delete(user);
+    }
 }
