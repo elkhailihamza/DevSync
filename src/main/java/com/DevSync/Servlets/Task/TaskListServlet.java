@@ -13,7 +13,7 @@ import jakarta.servlet.http.HttpSession;
 import java.io.IOException;
 import java.util.List;
 
-@WebServlet("/tasks")
+@WebServlet("/tasks/list")
 public class TaskListServlet extends HttpServlet {
 
     @Inject
