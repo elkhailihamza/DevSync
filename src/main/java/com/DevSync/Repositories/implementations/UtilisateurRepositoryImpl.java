@@ -10,7 +10,6 @@ import org.hibernate.Transaction;
 import org.hibernate.query.Query;
 
 import java.util.List;
-import java.util.Objects;
 
 @ApplicationScoped
 public class UtilisateurRepositoryImpl implements UtilisateurRepository {
@@ -66,11 +65,13 @@ public class UtilisateurRepositoryImpl implements UtilisateurRepository {
 
         try (Session session = sessionFactory.openSession()) {
             transaction = session.beginTransaction();
-            Query<Void> query = session.createQuery("DELETE FROM Utilisateurs WHERE id = :userId", Void.class);
-            query.setParameter("userId", entity.getId());
-            query.executeUpdate();
-            session.detach(entity);
-            transaction.commit();
+            Utilisateurs user = session.get(Utilisateurs.class, entity.getId());
+            if (user != null) {
+                session.remove(user);
+                transaction.commit();
+            } else {
+                System.out.println("User with ID " + entity.getId() + " not found.");
+            }
         } catch (Exception e) {
             if (transaction != null)
                 transaction.rollback();

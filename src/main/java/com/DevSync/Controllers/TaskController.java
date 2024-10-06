@@ -17,6 +17,10 @@ public class TaskController extends Controller {
         return taskService.fetchUserCreatedTasks(id);
     }
 
+    public Tasks getTaskById(long id) {
+        return taskService.findById(id);
+    }
+
     public String getLocalDate() {
         LocalDateTime now = LocalDateTime.now();
         return now.format(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm"));
@@ -30,5 +34,13 @@ public class TaskController extends Controller {
 
     public void saveTask(Tasks task) {
         taskService.save(task);
+    }
+
+    public void updateTask(Tasks task) {
+        taskService.update(task);
+    }
+
+    public void deleteTask(Tasks task) {
+        taskService.delete(task);
     }
 }

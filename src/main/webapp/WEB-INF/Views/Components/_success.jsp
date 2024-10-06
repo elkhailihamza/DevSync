@@ -1,7 +1,7 @@
 <%
   String successMessage = (String) request.getAttribute("successMessage");
   if (successMessage != null && !successMessage.isEmpty()) {%>
-<p style="color: green;"><%= successMessage %></p>
+<p class="bg-green-400"><%= successMessage %></p>
 <%
   }
 %>

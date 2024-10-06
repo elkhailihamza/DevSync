@@ -7,7 +7,7 @@
     int i = 1;
 %>
 
-<div class="h-screen w-screen flex justify-center items-center">
+<div class="h-screen w-screen flex flex-col gap-4 justify-center items-center">
     <%
         if (taskList != null && !taskList.isEmpty()) {
     %>
@@ -63,9 +63,13 @@
                 </td>
                 <td class="px-6 py-4">
                     <div class="text-white" style="display: flex; justify-content: space-between">
-                        <button class="bg-green-500 hover:bg-green-700 transition-all p-1 rounded-md">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 14.66V20a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h5.34"></path><polygon points="18 2 22 6 12 16 8 16 8 12 18 2"></polygon></svg>
-                        </button>
+                        <a href="${pageContext.request.contextPath}/tasks/update?id=<%=task.getId()%>" class="bg-green-500 hover:bg-green-700 transition-all p-1 rounded-md">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M20 14.66V20a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h5.34"></path>
+                                <polygon points="18 2 22 6 12 16 8 16 8 12 18 2"></polygon>
+                            </svg>
+                        </a>
+
                         <form action="${pageContext.request.contextPath}/tasks/delete" method="post">
                             <input type="hidden" name="taskId" value="<%= task.getId() %>" />
                             <button class="bg-red-500 hover:bg-red-700 transition-all p-1 rounded-md">
@@ -80,6 +84,10 @@
             %>
             </tbody>
         </table>
+        <div class="w-full flex justify-between items-center p-4" style="user-select: none">
+            <h1>Create a new Task</h1>
+            <a href="${pageContext.request.contextPath}/tasks/create" class="bg-blue-600 hover:bg-blue-700 transition-all text-white px-4 py-2 rounded-sm">Create a task</a>
+        </div>
     </div>
     <%
     } else {

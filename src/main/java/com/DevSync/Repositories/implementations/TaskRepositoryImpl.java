@@ -63,10 +63,13 @@ public class TaskRepositoryImpl implements TaskRepository {
         Transaction transaction = null;
         try (Session session = sessionFactory.openSession()) {
             transaction = session.beginTransaction();
-            Query<Void> query = session.createQuery("DELETE FROM Tasks WHERE id = :taskId", Void.class);
-            query.setParameter("taskId", entity.getId());
-            query.executeUpdate();
-            transaction.commit();
+            Tasks task = session.get(Tasks.class, entity.getId());
+            if (task != null) {
+                session.remove(task);
+                transaction.commit();
+            } else {
+                System.out.println("Task with ID " + entity.getId() + " not found.");
+            }
         } catch (Exception e) {
             if (transaction != null)
                 transaction.rollback();
