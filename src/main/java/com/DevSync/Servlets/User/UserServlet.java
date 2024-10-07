@@ -13,7 +13,7 @@ import jakarta.servlet.http.HttpSession;
 import java.io.IOException;
 import java.util.List;
 
-@WebServlet("/users")
+@WebServlet(urlPatterns = {"/users", "/users/*"})
 public class UserServlet extends HttpServlet {
     @Inject
     protected UtilisateurController utilisateurController;
@@ -58,29 +58,23 @@ public class UserServlet extends HttpServlet {
     }
 
     @Override
-    protected void doPut(HttpServletRequest request, HttpServletResponse response) throws IOException {
+    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        String method = request.getParameter("_method");
         long userId = Long.parseLong(request.getParameter("id"));
-
-        Utilisateurs user = Shared.assignValuesToUser(request);
-        Utilisateurs userForPass = utilisateurController.getCertainUser(userId);
-
-        user.setUser_pass(userForPass.getUser_pass());
-
-        utilisateurController.updateUser(user);
-        response.sendRedirect(request.getContextPath()+"/users");
-    }
-
-    @Override
-    protected void doDelete(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        String userId = request.getParameter("userId");
-
-        if (userId != null && !userId.isEmpty()) {
-            Utilisateurs user = new Utilisateurs();
-            user.setId(Long.parseLong(userId));
-            utilisateurController.deleteUser(user);
-            request.setAttribute("successMessage", "User successfully deleted!");
+        Utilisateurs user = utilisateurController.getCertainUser(userId);
+        switch (method) {
+            case "UPDATE":
+                Shared.assignValuesToUser(request, user);
+                    utilisateurController.updateUser(user);
+                    request.setAttribute("successMessage", "User successfully updated!");
+                break;
+            case "DELETE":
+                    utilisateurController.deleteUser(user);
+                    request.setAttribute("successMessage", "User successfully deleted!");
+                break;
         }
-
         response.sendRedirect(request.getContextPath() + "/users");
     }
 }
+
+
