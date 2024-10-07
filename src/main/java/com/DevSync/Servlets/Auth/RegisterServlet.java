@@ -26,7 +26,7 @@ public class RegisterServlet extends HttpServlet {
         String username = request.getParameter("username");
         String email = request.getParameter("email");
         String password = request.getParameter("password");
-        boolean isManager = "true".equals(request.getParameter("manager"));
+        boolean isManager = "true".equalsIgnoreCase(request.getParameter("isManager"));
 
         if (utilisateurController.register(username, email, password, isManager)) {
             request.setAttribute("successMessage", "register success");

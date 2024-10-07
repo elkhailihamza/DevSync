@@ -13,7 +13,7 @@ import jakarta.servlet.http.HttpSession;
 import java.io.IOException;
 import java.util.List;
 
-@WebServlet(urlPatterns = {"/users", "/users/*"})
+@WebServlet("/users/*")
 public class UserServlet extends HttpServlet {
     @Inject
     protected UtilisateurController utilisateurController;
@@ -31,6 +31,11 @@ public class UserServlet extends HttpServlet {
 
         String pathInfo = request.getPathInfo();
 
+        if (pathInfo == null) {
+            response.sendRedirect(request.getContextPath() + "/users/list");
+            return;
+        }
+
         switch (pathInfo) {
             case "/list":
                 request.setAttribute("contentPage", "/WEB-INF/Views/User/UserList.jsp");
@@ -38,8 +43,8 @@ public class UserServlet extends HttpServlet {
                 request.setAttribute("UserList", users);
                 break;
             case "/update":
-
-                Utilisateurs selectedUser = (Utilisateurs) session.getAttribute("user");
+                long userId = Long.parseLong(request.getParameter("id"));
+                Utilisateurs selectedUser = utilisateurController.getCertainUser(userId);
 
                 if (selectedUser == null) {
                     response.sendError(HttpServletResponse.SC_NOT_FOUND, "User not found");
