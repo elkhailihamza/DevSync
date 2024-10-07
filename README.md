@@ -66,4 +66,4 @@ This project is probably under the [MIT LICENCE](https://www.youtube.com/watch?v
 
 ## Final Notes
 
-- Both this project and README.md have been blessed by ChatGTP.
+- This project and README.md have both been blessed by ChatGTP.
