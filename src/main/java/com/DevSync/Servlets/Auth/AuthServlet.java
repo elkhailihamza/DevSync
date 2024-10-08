@@ -35,7 +35,7 @@ public class AuthServlet extends HttpServlet {
                     response.sendRedirect(request.getContextPath());
                     return;
                 }
-                request.setAttribute("contentPage", "/WEB-INF/Views/Auth/" + pathInfo + ".jsp");
+                request.setAttribute("contentPage", "/WEB-INF/Views/Auth" + pathInfo + ".jsp");
                 break;
             case "/logout":
                 if (session != null) {
@@ -48,7 +48,7 @@ public class AuthServlet extends HttpServlet {
     }
 
     @Override
-    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
+    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
         String type = request.getParameter("_type");
 
         String username = request.getParameter("username");
@@ -62,7 +62,7 @@ public class AuthServlet extends HttpServlet {
                 request.setAttribute("successMessage", "Register successful!");
             } else {
                 request.setAttribute("errorMessage", "Email is already in use!");
-                request.getRequestDispatcher("/WEB-INF/Views/Auth/register.jsp").forward(request, response);
+                response.sendRedirect(request.getContextPath() + "/auth/register");
                 return;
             }
         }
@@ -72,7 +72,7 @@ public class AuthServlet extends HttpServlet {
             response.sendRedirect(request.getContextPath() + "/home");
         } else {
             request.setAttribute("errorMessage", "Invalid username or password.");
-            request.getRequestDispatcher("/WEB-INF/Views/Auth/login.jsp").forward(request, response);
+            response.sendRedirect(request.getContextPath() + "/auth/login");
         }
     }
 }

@@ -11,7 +11,7 @@ public class Shared {
         String prenom = request.getParameter("user_prenom");
         String email = request.getParameter("user_email");
         String isManagerParam = request.getParameter("isManager");
-        boolean isManager = isManagerParam != null && isManagerParam.equalsIgnoreCase("true");
+        boolean isManager = "true".equalsIgnoreCase(isManagerParam);
 
         user.setUser_name(username);
         user.setNom(nom.isEmpty() ? null : nom);

@@ -49,6 +49,7 @@
             </label>
         </div>
         <div class="text-center">
+            <input hidden name="_method" value="CREATE">
             <button type="submit" class="py-2 px-6 transition-all bg-blue-600 hover:bg-blue-700 text-white rounded-sm">Create</button>
         </div>
     </form>
