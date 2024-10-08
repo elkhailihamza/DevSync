@@ -23,13 +23,13 @@
         <div class="mb-4">
             <label class="grid gap-4">
                 <span class="bold">Start date<span class="text-red-900"> *</span></span>
-                <input name="task_createdAT" value="${formattedDate}" class="border p-2" type="datetime-local" required/>
+                <input id="createdAT" name="task_createdAT" value="${formattedDate}" class="border p-2" type="datetime-local" required/>
             </label>
         </div>
         <div class="mb-4">
             <label class="grid gap-4">
                 <span class="bold">Due date<span class="text-red-900"> *</span></span>
-                <input name="task_dueDate" value="${formattedDate}" class="border p-2" type="datetime-local" required/>
+                <input id="dueDate" name="task_dueDate" value="${formattedDate}" class="border p-2" type="datetime-local" required/>
             </label>
         </div>
         <div class="mb-6">
@@ -54,3 +54,5 @@
         </div>
     </form>
 </div>
+
+<script src="${pageContext.request.contextPath}/js/DateChangeOvertime.js"></script>

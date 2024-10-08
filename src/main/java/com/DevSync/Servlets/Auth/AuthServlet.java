@@ -49,6 +49,7 @@ public class AuthServlet extends HttpServlet {
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        HttpSession session = request.getSession();
         String type = request.getParameter("_type");
 
         String username = request.getParameter("username");
@@ -59,19 +60,19 @@ public class AuthServlet extends HttpServlet {
             boolean isManager = "true".equalsIgnoreCase(request.getParameter("isManager"));
 
             if (utilisateurController.register(username, email, password, isManager)) {
-                request.setAttribute("successMessage", "Register successful!");
+                session.setAttribute("successMessage", "Register successful!");
             } else {
-                request.setAttribute("errorMessage", "Email is already in use!");
+                session.setAttribute("errorMessage", "Email is already in use!");
                 response.sendRedirect(request.getContextPath() + "/auth/register");
                 return;
             }
         }
 
         if (utilisateurController.login(username, password)) {
-            request.setAttribute("successMessage", "Login successful!");
+            session.setAttribute("successMessage", "Login successful!");
             response.sendRedirect(request.getContextPath() + "/home");
         } else {
-            request.setAttribute("errorMessage", "Invalid username or password.");
+            session.setAttribute("errorMessage", "Invalid username or password.");
             response.sendRedirect(request.getContextPath() + "/auth/login");
         }
     }
