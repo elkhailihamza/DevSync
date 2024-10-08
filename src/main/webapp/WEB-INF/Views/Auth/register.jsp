@@ -1,7 +1,7 @@
 <div class="h-screen w-screen flex justify-center items-center items-center">
     <div class="bg-white mx-4 p-8 w-96">
         <h1 class="text-3xl font-bold mb-10 text-center">Join The Community!</h1>
-        <form action="${pageContext.request.contextPath}/register" method="post">
+        <form action="${pageContext.request.contextPath}/auth/register" method="post">
             <div class="mb-4">
                 <label class="block font-semibold text-gray-700 mb-2">
                     <span>Username</span>
@@ -32,9 +32,10 @@
                 </label>
             </div>
             <div class="mb-4">
-                <span>Already have an account? <a href="${pageContext.request.contextPath}/login" class="text-blue-600 hover:underline">login</a></span>
+                <span>Already have an account? <a href="${pageContext.request.contextPath}/auth/login" class="text-blue-600 hover:underline">login</a></span>
             </div>
             <div class="mb-6 text-center">
+                <input hidden name="_type" value="register">
                 <button
                         class="bg-blue-600 transition-all hover:bg-blue-700 text-white font-bold py-2 px-6 rounded focus:outline-none focus:shadow-outline"
                         type="submit">
