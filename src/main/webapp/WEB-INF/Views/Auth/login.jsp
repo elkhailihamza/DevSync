@@ -1,7 +1,7 @@
 <div class="h-screen w-screen flex justify-center items-center items-center">
     <div class="bg-white mx-4 p-8 w-96">
         <h1 class="text-3xl font-bold mb-10 text-center">Welcome Back!</h1>
-        <form action="${pageContext.request.contextPath}/login" method="post">
+        <form action="${pageContext.request.contextPath}/auth/login" method="post">
             <div class="mb-4">
                 <label class="block font-semibold text-gray-700 mb-2">
                     <span>Username</span>
@@ -19,7 +19,7 @@
                 </label>
             </div>
             <div class="mb-4">
-                <span>Don't have an account? <a href="${pageContext.request.contextPath}/register" class="text-blue-600 hover:underline">register</a> now!</span>
+                <span>Don't have an account? <a href="${pageContext.request.contextPath}/auth/register" class="text-blue-600 hover:underline">register</a> now!</span>
             </div>
             <div class="mb-6 text-center">
                 <button
