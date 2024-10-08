@@ -30,9 +30,17 @@ CREATE TABLE IF NOT EXISTS tasks(
 	
 );
 
-CREATE TABLE IF NOT EXISTS tag(
+CREATE TABLE IF NOT EXISTS tags(
 	id SERIAL PRIMARY KEY,
 	tag_name VARCHAR(255) NOT NULL,
 	task_id INT NOT NULL,
     CONSTRAINT task_fk FOREIGN KEY (task_id) REFERENCES tasks(id)
+);
+
+CREATE TABLE IF NOT EXISTS task_tags(
+	task_id INT NOT NULL,
+	tag_id INT NOT NULL,
+
+	CONSTRAINT task_fk FOREIGN KEY (task_id) REFERENCES tasks(id),
+	CONSTRAINT tag_id FOREIGN KEY (tag_id) REFERENCES tags(id)
 );

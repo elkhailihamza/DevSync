@@ -3,6 +3,10 @@
     List<String> statusList = (List<String>) request.getAttribute("statusList");
 %>
 
+<script src="${pageContext.request.contextPath}/js/TaskScript.js">
+    script.startBeforeEnd();
+</script>
+
 <div class="h-screen flex flex-col gap-4 justify-center items-center">
     <div class="w-full text-center">
         <h2 class="text-2xl">Backlog</h2>

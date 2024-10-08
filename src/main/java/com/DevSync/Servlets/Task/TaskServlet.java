@@ -23,7 +23,8 @@ public class TaskServlet extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         HttpSession session = request.getSession();
         String username = (String) session.getAttribute("username");
-        long userId = (long) session.getAttribute("userId");
+
+        long userId =  (Long) session.getAttribute("userId");
 
         if (username == null) {
             response.sendRedirect(request.getContextPath() + "/login");
