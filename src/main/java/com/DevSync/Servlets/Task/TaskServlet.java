@@ -99,7 +99,7 @@ public class TaskServlet extends HttpServlet {
     }
 
     private void setCommonAttributes(HttpServletRequest request) {
-        String formattedDate = taskController.getLocalDate();
+        String formattedDate = taskController.getLocalDateFullFormat();
         List<String> statusList = taskController.getStatusList();
 
         request.setAttribute("contentPage", "/WEB-INF/Views/Task/TaskCreate.jsp");
