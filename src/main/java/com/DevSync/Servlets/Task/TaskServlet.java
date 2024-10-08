@@ -22,13 +22,13 @@ public class TaskServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         HttpSession session = request.getSession();
-        String username = (String) session.getAttribute("username");
-        long userId = (long) session.getAttribute("userId");
 
-        if (username == null) {
-            response.sendRedirect(request.getContextPath() + "/login");
+        if (session.getAttribute("username") == null) {
+            response.sendRedirect(request.getContextPath() + "/auth/login");
             return;
         }
+
+        long userId = (long) session.getAttribute("userId");
 
         String pathInfo = request.getPathInfo();
 
@@ -69,21 +69,22 @@ public class TaskServlet extends HttpServlet {
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        HttpSession session = request.getSession();
         String method = request.getParameter("_method");
         long taskId;
-        Tasks task = null;
+        Tasks task;
 
         switch (method) {
             case "CREATE":
             case "UPDATE":
                 task = Shared.assignValuesToTask(request);
+                String[] message;
                 if ("CREATE".equals(method)) {
-                    taskController.saveTask(task);
-                    request.setAttribute("successMessage", "Task updated successfully!");
+                    message = taskController.saveTask(task);
                 } else {
-                    taskController.updateTask(task);
-                    request.setAttribute("successMessage", "Task created successfully!");
+                    message = taskController.updateTask(task);
                 }
+                session.setAttribute(message[0], message[1]);
                 break;
             case "DELETE":
                     task = new Tasks();

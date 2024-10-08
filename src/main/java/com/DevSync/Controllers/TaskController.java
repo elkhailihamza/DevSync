@@ -32,12 +32,20 @@ public class TaskController extends Controller {
                 .collect(Collectors.toList());
     }
 
-    public void saveTask(Tasks task) {
+    public String[] saveTask(Tasks task) {
+        if (task.getCreatedAt().isBefore(LocalDateTime.parse(getLocalDate()))) {
+            return new String[]{"errorMessage", "Task date can't be before today's!"};
+        }
         taskService.save(task);
+        return new String[]{"successMessage", "Task created successfully!"};
     }
 
-    public void updateTask(Tasks task) {
+    public String[] updateTask(Tasks task) {
+        if (task.getCreatedAt().isBefore(LocalDateTime.parse(getLocalDate()))) {
+            return new String[]{"errorMessage", "Task date can't be before today's!"};
+        }
         taskService.update(task);
+        return new String[]{"successMessage", "Task updated successfully!"};
     }
 
     public void deleteTask(Tasks task) {
