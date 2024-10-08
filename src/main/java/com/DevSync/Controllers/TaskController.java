@@ -4,6 +4,7 @@ import com.DevSync.Entities.Tasks;
 import com.DevSync.Enums.Status;
 import jakarta.enterprise.context.RequestScoped;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
@@ -21,9 +22,14 @@ public class TaskController extends Controller {
         return taskService.findById(id);
     }
 
+    public String getLocalDateFullFormat() {
+        LocalDateTime now = LocalDateTime.now();
+        return now.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm"));
+    }
+
     public String getLocalDate() {
         LocalDateTime now = LocalDateTime.now();
-        return now.format(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm"));
+        return now.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
     }
 
     public List<String> getStatusList() {
@@ -32,12 +38,23 @@ public class TaskController extends Controller {
                 .collect(Collectors.toList());
     }
 
-    public void saveTask(Tasks task) {
+    public String[] saveTask(Tasks task) {
+        if (task.getCreatedAt().toLocalDate().isBefore(LocalDate.parse(getLocalDate())))
+            return new String[]{"errorMessage", "Task date can't be before today's!"};
+
+        else if (task.getCreatedAt().isAfter(task.getDueDate()))
+            return new String[]{"errorMessage", "Task date can't be after due date!"};
+
         taskService.save(task);
+        return new String[]{"successMessage", "Task created successfully!"};
     }
 
-    public void updateTask(Tasks task) {
+    public String[] updateTask(Tasks task) {
+        if (task.getCreatedAt().isBefore(LocalDateTime.parse(getLocalDate()))) {
+            return new String[]{"errorMessage", "Task date can't be before today's!"};
+        }
         taskService.update(task);
+        return new String[]{"successMessage", "Task updated successfully!"};
     }
 
     public void deleteTask(Tasks task) {
