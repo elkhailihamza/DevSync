@@ -1,4 +1,3 @@
-<%@ page import="com.DevSync.Entities.Utilisateurs" %>
 <nav class="bg-white shadow-sm border-gray-200 dark:bg-gray-900 fixed top-0 left-0 w-full">
     <div class="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-4">
         <a href="<%= request.getContextPath() %>" class="flex items-center space-x-3 rtl:space-x-reverse">
@@ -43,8 +42,8 @@
             </ul>
         </div>
     </div>
+    <div style="top: 65px; left: 0;" class="w-full fixed">
+        <jsp:include page="_success.jsp" />
+        <jsp:include page="_error.jsp" />
+    </div>
 </nav>
-<div style="top: 65px" class="fixed">
-    <jsp:include page="_success.jsp" />
-    <jsp:include page="_error.jsp" />
-</div>
