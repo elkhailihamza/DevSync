@@ -34,7 +34,7 @@ public class RegisterServlet extends HttpServlet {
             response.sendRedirect(request.getContextPath()+"/home");
         } else {
             request.setAttribute("errorMessage", "Email is Already In Use!");
-            request.getRequestDispatcher("/WEB-INF/Views/Auth/register.jsp").forward(request, response);
+            response.sendRedirect(request.getContextPath()+"/register");
         }
     }
 }

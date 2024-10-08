@@ -31,7 +31,7 @@ public class LoginServlet extends HttpServlet {
             response.sendRedirect(request.getContextPath()+"/home");
         } else {
             request.setAttribute("errorMessage", "Invalid username or password.");
-            request.getRequestDispatcher("/WEB-INF/Views/Auth/login.jsp").forward(request, response);
+            response.sendRedirect(request.getContextPath()+"/login");
         }
     }
 }
