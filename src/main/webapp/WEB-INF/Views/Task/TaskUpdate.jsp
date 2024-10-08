@@ -51,6 +51,7 @@
             </label>
         </div>
         <div class="text-center">
+            <input hidden name="_method" value="UPDATE">
             <button type="submit" class="py-2 px-6 transition-all bg-green-600 hover:bg-green-700 text-white rounded-sm">Update</button>
         </div>
     </form>
