@@ -74,4 +74,13 @@ public class TagRepositoryImpl implements TagRepository {
                 transaction.rollback();
         }
     }
+
+    @Override
+    public Tags fetchByName(String name) {
+        try (Session session = sessionFactory.openSession()) {
+            return session.createQuery("FROM Tags t WHERE t.tag_name = :name", Tags.class)
+                    .setParameter("name", name)
+                    .uniqueResult();
+        }
+    }
 }

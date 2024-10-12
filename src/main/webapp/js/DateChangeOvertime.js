@@ -1,14 +1,20 @@
 let intervalId;
+const createdAtDate = document.getElementById("createdAT");
+const dueDateDate = document.getElementById("dueDate");
 
 function updateCreatedAtField(now) {
-    document.getElementById("createdAT").value = now.toISOString().slice(0, 16);
+    if (createdAtDate != null) {
+        createdAtDate.value = now.toISOString().slice(0, 16);
+    }
     return now;
 }
 
 function updateDueDateField(now, createdAt) {
     const dueDate = new Date(createdAt);
     dueDate.setHours((dueDate.getHours() + 2));
-    document.getElementById("dueDate").value = dueDate.toISOString().slice(0, 16);
+    if (dueDateDate) {
+        dueDateDate.value = dueDate.toISOString().slice(0, 16);
+    }
 }
 
 function updateDateTimeFields() {
@@ -26,10 +32,14 @@ function stopAutoUpdate() {
     clearInterval(intervalId);
 }
 
-window.onload = function() {
+window.addEventListener("load", () => {
     updateDateTimeFields();
     startAutoUpdate();
 
-    document.getElementById("createdAT").addEventListener("change", stopAutoUpdate);
-    document.getElementById("dueDate").addEventListener("change", stopAutoUpdate);
-};
+    if (createdAtDate) {
+        createdAtDate.addEventListener("change", stopAutoUpdate);
+    }
+    if (dueDateDate) {
+        dueDateDate.addEventListener("change", stopAutoUpdate);
+    }
+})

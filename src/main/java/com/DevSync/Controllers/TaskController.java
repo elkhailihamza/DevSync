@@ -1,5 +1,6 @@
 package com.DevSync.Controllers;
 
+import com.DevSync.Entities.Tags;
 import com.DevSync.Entities.Tasks;
 import com.DevSync.Enums.Status;
 import jakarta.enterprise.context.RequestScoped;
@@ -7,6 +8,7 @@ import jakarta.enterprise.context.RequestScoped;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -50,9 +52,12 @@ public class TaskController extends Controller {
     }
 
     public String[] updateTask(Tasks task) {
-        if (task.getCreatedAt().isBefore(LocalDateTime.parse(getLocalDate()))) {
+        if (task.getCreatedAt().toLocalDate().isBefore(LocalDate.parse(getLocalDate())))
             return new String[]{"errorMessage", "Task date can't be before today's!"};
-        }
+
+        else if (task.getCreatedAt().isAfter(task.getDueDate()))
+            return new String[]{"errorMessage", "Task date can't be after due date!"};
+
         taskService.update(task);
         return new String[]{"successMessage", "Task updated successfully!"};
     }

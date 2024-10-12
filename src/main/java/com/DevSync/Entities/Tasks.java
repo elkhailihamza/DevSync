@@ -4,6 +4,7 @@ import com.DevSync.Enums.Status;
 import jakarta.persistence.*;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Entity
 @Table(name = "tasks",
@@ -38,6 +39,14 @@ public class Tasks {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "assignee_id")
     private Utilisateurs assignee;
+
+    @ManyToMany(fetch = FetchType.EAGER)
+    @JoinTable(
+            name = "task_tags",
+            joinColumns = @JoinColumn(name = "task_id"),
+            inverseJoinColumns = @JoinColumn(name = "tag_id")
+    )
+    private List<Tags> tags;
 
     public long getId() {
         return id;
@@ -101,5 +110,13 @@ public class Tasks {
 
     public void setAssignee_id(Utilisateurs assignee) {
         this.assignee = assignee;
+    }
+
+    public List<Tags> getTags() {
+        return tags;
+    }
+
+    public void setTags(List<Tags> tags) {
+        this.tags = tags;
     }
 }

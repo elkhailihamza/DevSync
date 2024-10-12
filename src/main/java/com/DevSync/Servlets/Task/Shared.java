@@ -30,6 +30,8 @@ public class Shared {
         if (dueDate != null && !dueDate.isEmpty()) {
             task.setDueDate(LocalDateTime.parse(dueDate));
         }
+
+
         String statusValue = request.getParameter("task_status");
         task.setStatus(Status.fromDBValue(statusValue));
 
