@@ -61,3 +61,4 @@
 
 <script src="${pageContext.request.contextPath}/js/AddTags.js"></script>
 <script src="${pageContext.request.contextPath}/js/DateChangeOvertime.js"></script>
+<script src="${pageContext.request.contextPath}/js/TaskFormValidator.js"></script>

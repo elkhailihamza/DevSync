@@ -1,5 +1,4 @@
 const tags = [];
-const taskForm = document.getElementById("task-form");
 const input = document.getElementById("tagInput");
 const addTagsBtn = document.getElementById("addTagsBtn");
 const tagError = document.getElementById("tagError");
@@ -94,13 +93,6 @@ const xBtnForRemoval = () => {
 
 // Event listeners
 addTagsBtn.addEventListener("click", () => createTag(input.value));
-
-taskForm.addEventListener("submit", (e) => {
-    e.preventDefault();
-    prepareTagsForSubmission();
-    console.log(tags);
-    e.target.submit();
-});
 
 // Prepare tags for submission
 const prepareTagsForSubmission = () => {

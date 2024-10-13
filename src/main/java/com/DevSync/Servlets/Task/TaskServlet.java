@@ -14,6 +14,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 
 import java.io.IOException;
+import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -82,7 +83,7 @@ public class TaskServlet extends HttpServlet {
     }
 
     @Override
-    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
+    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
         HttpSession session = request.getSession();
         String method = request.getParameter("_method");
         long taskId;
@@ -93,11 +94,17 @@ public class TaskServlet extends HttpServlet {
             case "UPDATE":
                 task = Shared.assignValuesToTask(request);
 
+                Duration duration = Duration.between(task.getCreatedAt(), task.getDueDate());
+                long daysDifference = duration.toDays();
+
+                if (daysDifference > 3) {
+                    response.sendRedirect(request.getContextPath()+"/tasks/"+method.toLowerCase());
+                }
+
                 String[] tags = request.getParameterValues("tags[]");
                 List<Tags> tagList = new ArrayList<>();
 
-                if (tags != null) {
-
+                if (tags != null && tags.length >= 3) {
                     for (String tag : tags) {
                         Tags existingTag = tagController.findByName(tag);
                         if (existingTag != null) {
@@ -109,6 +116,8 @@ public class TaskServlet extends HttpServlet {
                             tagList.add(newTag);
                         }
                     }
+                } else {
+                    response.sendRedirect(request.getContextPath()+"/tasks/"+method.toLowerCase());
                 }
 
                 task.setTags(tagList);
