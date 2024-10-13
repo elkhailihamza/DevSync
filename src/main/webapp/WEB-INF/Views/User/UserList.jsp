@@ -1,9 +1,9 @@
 <%@ page import="java.util.List" %>
-<%@ page import="com.DevSync.Entities.Utilisateurs" %>
+<%@ page import="com.DevSync.Entities.Utilisateur" %>
 
 <%
   @SuppressWarnings("unchecked")
-  List<Utilisateurs> userList = (List<Utilisateurs>) request.getAttribute("UserList");
+  List<Utilisateur> userList = (List<Utilisateur>) request.getAttribute("UserList");
   int i = 1;
   long userId = (long) session.getAttribute("userId");
 %>
@@ -28,7 +28,7 @@
       </thead>
       <tbody>
       <%
-        for (Utilisateurs user : userList) {
+        for (Utilisateur user : userList) {
           if (user.getId() != userId) {
       %>
       <tr class="odd:bg-white odd:dark:bg-gray-900 even:bg-gray-50 even:dark:bg-gray-800 border-b dark:border-gray-700">

@@ -1,6 +1,6 @@
 package com.DevSync.Controllers;
 
-import com.DevSync.Entities.Utilisateurs;
+import com.DevSync.Entities.Utilisateur;
 import jakarta.enterprise.context.RequestScoped;
 import jakarta.servlet.http.HttpSession;
 
@@ -11,7 +11,7 @@ public class UtilisateurController extends Controller {
 
     public boolean login(String username, String password) {
         if (utilisateurService.authenticate(username, password)) {
-            Utilisateurs user = utilisateurService.fetchUserByUsername(username);
+            Utilisateur user = utilisateurService.fetchUserByUsername(username);
 
             HttpSession session = request.getSession(true);
             session.setAttribute("userId", user.getId());
@@ -27,7 +27,7 @@ public class UtilisateurController extends Controller {
         if (username != null && !username.isEmpty() && email != null && !email.isEmpty() && password != null && !password.isEmpty()) {
             if (!utilisateurService.emailAlreadyExists(email)) {
 
-                Utilisateurs user = new Utilisateurs();
+                Utilisateur user = new Utilisateur();
                 user.setUser_name(username);
                 user.setEmail(email);
                 user.setUser_pass(password);
@@ -40,23 +40,23 @@ public class UtilisateurController extends Controller {
         return false;
     }
 
-    public Utilisateurs currentUser(String username) {
+    public Utilisateur currentUser(String username) {
         return utilisateurService.fetchUserByUsername(username);
     }
 
-    public void updateUser(Utilisateurs user) {
+    public void updateUser(Utilisateur user) {
         utilisateurService.update(user);
     }
 
-    public List<Utilisateurs> getAllUsers() {
+    public List<Utilisateur> getAllUsers() {
         return utilisateurService.fetchAll();
     }
 
-    public Utilisateurs getCertainUser(long id) {
+    public Utilisateur getCertainUser(long id) {
         return utilisateurService.findById(id);
     }
 
-    public void deleteUser(Utilisateurs user) {
+    public void deleteUser(Utilisateur user) {
         utilisateurService.delete(user);
     }
 }

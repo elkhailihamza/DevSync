@@ -1,6 +1,6 @@
 package com.DevSync.Controllers;
 
-import com.DevSync.Entities.Tags;
+import com.DevSync.Entities.Tag;
 import jakarta.enterprise.context.RequestScoped;
 
 import java.util.Arrays;
@@ -9,27 +9,27 @@ import java.util.stream.Collectors;
 
 @RequestScoped
 public class TagController extends Controller {
-    public void saveTag(Tags tag) {
+    public void saveTag(Tag tag) {
         tagService.save(tag);
     }
 
-    public void saveTagList(List<Tags> tags) {
+    public void saveTagList(List<Tag> tags) {
         tagService.saveTagList(tags);
     }
 
-    public List<Tags> returnAsTags(String[] tagStringArr) {
+    public List<Tag> returnAsTags(String[] tagStringArr) {
         return Arrays.stream(tagStringArr)
                 .map(this::createTag)
                 .collect(Collectors.toList());
     }
 
-    private Tags createTag(String tagName) {
-        Tags tag = new Tags();
+    private Tag createTag(String tagName) {
+        Tag tag = new Tag();
         tag.setTag_name(tagName);
         return tag;
     }
 
-    public Tags findByName(String tagName) {
+    public Tag findByName(String tagName) {
         return tagService.fetchByName(tagName);
     }
 }

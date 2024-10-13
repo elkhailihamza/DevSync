@@ -1,7 +1,7 @@
 package com.DevSync.Servlets.User;
 
 import com.DevSync.Controllers.UtilisateurController;
-import com.DevSync.Entities.Utilisateurs;
+import com.DevSync.Entities.Utilisateur;
 import jakarta.inject.Inject;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -39,12 +39,12 @@ public class UserServlet extends HttpServlet {
         switch (pathInfo) {
             case "/list":
                 request.setAttribute("contentPage", "/WEB-INF/Views/User/UserList.jsp");
-                List<Utilisateurs> users = utilisateurController.getAllUsers();
+                List<Utilisateur> users = utilisateurController.getAllUsers();
                 request.setAttribute("UserList", users);
                 break;
             case "/update":
                 long userId = Long.parseLong(request.getParameter("id"));
-                Utilisateurs selectedUser = utilisateurController.getCertainUser(userId);
+                Utilisateur selectedUser = utilisateurController.getCertainUser(userId);
 
                 if (selectedUser == null) {
                     response.sendError(HttpServletResponse.SC_NOT_FOUND, "User not found");
@@ -66,7 +66,7 @@ public class UserServlet extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
         String method = request.getParameter("_method");
         long userId = Long.parseLong(request.getParameter("id"));
-        Utilisateurs user = utilisateurController.getCertainUser(userId);
+        Utilisateur user = utilisateurController.getCertainUser(userId);
         switch (method) {
             case "UPDATE":
                 Shared.assignValuesToUser(request, user);

@@ -1,9 +1,9 @@
 package com.DevSync.Repositories;
 
-import com.DevSync.Entities.Tasks;
+import com.DevSync.Entities.Task;
 
 import java.util.List;
 
-public interface TaskRepository extends GenericRepository<Tasks, Long>{
-    List<Tasks> fetchUserCreatedTasks(long id);
+public interface TaskRepository extends GenericRepository<Task, Long>{
+    List<Task> fetchUserCreatedTasks(long id);
 }

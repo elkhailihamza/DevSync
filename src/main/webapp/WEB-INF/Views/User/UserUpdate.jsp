@@ -1,7 +1,7 @@
-<%@ page import="com.DevSync.Entities.Utilisateurs" %>
+<%@ page import="com.DevSync.Entities.Utilisateur" %>
 <%
   @SuppressWarnings("unchecked")
-  Utilisateurs selectedUser = (Utilisateurs) request.getAttribute("selectedUser");
+  Utilisateur selectedUser = (Utilisateur) request.getAttribute("selectedUser");
 %>
 
 <div class="h-screen flex flex-col gap-4 justify-center items-center">

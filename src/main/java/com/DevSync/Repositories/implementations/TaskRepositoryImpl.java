@@ -1,6 +1,6 @@
 package com.DevSync.Repositories.implementations;
 
-import com.DevSync.Entities.Tasks;
+import com.DevSync.Entities.Task;
 import com.DevSync.Repositories.TaskRepository;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
@@ -18,22 +18,22 @@ public class TaskRepositoryImpl implements TaskRepository {
     private SessionFactory sessionFactory;
 
     @Override
-    public Tasks findById(Long id) {
+    public Task findById(Long id) {
         try (Session session = sessionFactory.openSession()) {
-            return session.get(Tasks.class, id);
+            return session.get(Task.class, id);
         }
     }
 
     @Override
-    public List<Tasks> fetchAll() {
+    public List<Task> fetchAll() {
         try (Session session = sessionFactory.openSession()) {
-            Query<Tasks> query = session.createQuery("FROM Tasks", Tasks.class);
+            Query<Task> query = session.createQuery("FROM Task", Task.class);
             return query.list();
         }
     }
 
     @Override
-    public void save(Tasks entity) {
+    public void save(Task entity) {
         Transaction transaction = null;
         try (Session session = sessionFactory.openSession()) {
             transaction = session.beginTransaction();
@@ -48,7 +48,7 @@ public class TaskRepositoryImpl implements TaskRepository {
     }
 
     @Override
-    public void update(Tasks entity) {
+    public void update(Task entity) {
         Transaction transaction = null;
         try (Session session = sessionFactory.openSession()) {
             transaction = session.beginTransaction();
@@ -61,11 +61,11 @@ public class TaskRepositoryImpl implements TaskRepository {
     }
 
     @Override
-    public void delete(Tasks entity) {
+    public void delete(Task entity) {
         Transaction transaction = null;
         try (Session session = sessionFactory.openSession()) {
             transaction = session.beginTransaction();
-            Tasks task = session.get(Tasks.class, entity.getId());
+            Task task = session.get(Task.class, entity.getId());
             if (task != null) {
                 session.remove(task);
                 transaction.commit();
@@ -79,9 +79,9 @@ public class TaskRepositoryImpl implements TaskRepository {
     }
 
     @Override
-    public List<Tasks> fetchUserCreatedTasks(long id) {
+    public List<Task> fetchUserCreatedTasks(long id) {
         try (Session session = sessionFactory.openSession()) {
-            Query<Tasks> query = session.createQuery("FROM Tasks WHERE creator.id = :creatorId", Tasks.class);
+            Query<Task> query = session.createQuery("FROM Task WHERE creator.id = :creatorId", Task.class);
             query.setParameter("creatorId", id);
             return query.list();
         }

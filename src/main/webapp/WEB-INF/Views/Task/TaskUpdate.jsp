@@ -1,9 +1,9 @@
 <%@ page import="java.util.List" %>
-<%@ page import="com.DevSync.Entities.Tasks" %>
+<%@ page import="com.DevSync.Entities.Task" %>
 <%
     @SuppressWarnings("unchecked")
     List<String> statusList = (List<String>) request.getAttribute("statusList");
-    Tasks selectedTask = (Tasks) request.getAttribute("selectedTask");
+    Task selectedTask = (Task) request.getAttribute("selectedTask");
     @SuppressWarnings("unchecked")
     String jsonArray = (String) request.getAttribute("tagList");
 %>

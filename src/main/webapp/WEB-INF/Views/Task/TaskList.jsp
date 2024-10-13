@@ -1,9 +1,9 @@
 <%@ page import="java.util.List" %>
-<%@ page import="com.DevSync.Entities.Tasks" %>
+<%@ page import="com.DevSync.Entities.Task" %>
 
 <%
     @SuppressWarnings("unchecked")
-    List<Tasks> taskList = (List<Tasks>) request.getAttribute("TaskList");
+    List<Task> taskList = (List<Task>) request.getAttribute("TaskList");
     int i = 1;
 %>
 
@@ -27,7 +27,7 @@
             </thead>
             <tbody>
             <%
-                for (Tasks task : taskList) {
+                for (Task task : taskList) {
             %>
             <tr class="odd:bg-white odd:dark:bg-gray-900 even:bg-gray-50 even:dark:bg-gray-800 border-b dark:border-gray-700">
                 <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">

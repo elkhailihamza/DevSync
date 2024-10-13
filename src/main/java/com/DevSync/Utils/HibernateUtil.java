@@ -7,9 +7,9 @@ import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
 import org.hibernate.cfg.Configuration;
 import org.hibernate.service.ServiceRegistry;
 
-import com.DevSync.Entities.Utilisateurs;
-import com.DevSync.Entities.Tasks;
-import com.DevSync.Entities.Tags;
+import com.DevSync.Entities.Utilisateur;
+import com.DevSync.Entities.Task;
+import com.DevSync.Entities.Tag;
 
 @ApplicationScoped
 public class HibernateUtil {
@@ -21,9 +21,9 @@ public class HibernateUtil {
 
             configuration.configure();
 
-            configuration.addAnnotatedClass(Utilisateurs.class);
-            configuration.addAnnotatedClass(Tasks.class);
-            configuration.addAnnotatedClass(Tags.class);
+            configuration.addAnnotatedClass(Utilisateur.class);
+            configuration.addAnnotatedClass(Task.class);
+            configuration.addAnnotatedClass(Tag.class);
 
             ServiceRegistry serviceRegistry = new StandardServiceRegistryBuilder()
                     .applySettings(configuration.getProperties()).build();
