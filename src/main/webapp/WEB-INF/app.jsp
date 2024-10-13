@@ -8,10 +8,13 @@
     <link rel="stylesheet" href="${pageContext.request.contextPath}/css/output.css">
     <link href="https://cdn.jsdelivr.net/npm/flowbite@2.5.2/dist/flowbite.min.css" rel="stylesheet" />
     <script src="https://cdn.jsdelivr.net/npm/flowbite@2.5.2/dist/flowbite.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
     <title>${pageTitle}</title>
 </head>
 <body>
     <jsp:include page="/WEB-INF/Views/Components/_navbar.jsp" />
-    <jsp:include page="${contentPage}" />
+    <div style="margin-top: 65px">
+        <jsp:include page="${contentPage}" />
+    </div>
 </body>
 </html>

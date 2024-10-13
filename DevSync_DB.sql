@@ -24,15 +24,21 @@ CREATE TABLE IF NOT EXISTS tasks(
 	creator_id INT NOT NULL,
 	assignee_id INT,
 
-	CONSTRAINT start_before_end CHECK (createdAt < end_date),	
+	CONSTRAINT start_before_end CHECK (createdAt < dueDate),
 	CONSTRAINT creator_fk FOREIGN KEY (creator_id) REFERENCES utilisateurs(id),
     CONSTRAINT assignee_fk FOREIGN KEY (assignee_id) REFERENCES utilisateurs(id)
 	
 );
 
-CREATE TABLE IF NOT EXISTS tag(
+CREATE TABLE IF NOT EXISTS tags(
 	id SERIAL PRIMARY KEY,
-	tag_name VARCHAR(255) NOT NULL,
+	tag_name VARCHAR(255) UNIQUE NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS task_tags(
 	task_id INT NOT NULL,
-    CONSTRAINT task_fk FOREIGN KEY (task_id) REFERENCES tasks(id)
+	tag_id INT NOT NULL,
+
+	CONSTRAINT task_fk FOREIGN KEY (task_id) REFERENCES tasks(id),
+	CONSTRAINT tag_id FOREIGN KEY (tag_id) REFERENCES tags(id)
 );
