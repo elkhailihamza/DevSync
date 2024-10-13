@@ -1,17 +1,18 @@
 <%@ page import="java.util.List" %>
 <%@ page import="com.DevSync.Entities.Tasks" %>
-<%@ page import="com.DevSync.Enums.Status" %>
 <%
     @SuppressWarnings("unchecked")
     List<String> statusList = (List<String>) request.getAttribute("statusList");
     Tasks selectedTask = (Tasks) request.getAttribute("selectedTask");
+    @SuppressWarnings("unchecked")
+    String jsonArray = (String) request.getAttribute("tagList");
 %>
 
 <div class="h-screen flex flex-col gap-4 justify-center items-center">
     <div class="w-full text-center">
         <h2 class="text-2xl"><%= selectedTask.getTitle() %></h2>
     </div>
-    <form class="w-full max-w-md min-w-fit text-lg md:text-md sm:text-sm" action="${pageContext.request.contextPath}/tasks/update?id=<%=selectedTask.getId()%>" method="post">
+    <form id="task-form" class="w-full max-w-md min-w-fit text-lg md:text-md sm:text-sm" action="${pageContext.request.contextPath}/tasks/update?id=<%=selectedTask.getId()%>" method="post">
         <div class="mb-4">
             <label class="grid gap-4">
                 <span class="bold">Title<span class="text-red-900"> *</span></span>
@@ -50,11 +51,18 @@
                 </select>
             </label>
         </div>
+        <div class="mb-6 w-full flex justify-between items-center">
+            <input type="hidden" id="tagsInput" name="tags" />
+            <jsp:include page="/WEB-INF/Views/Components/_tags.jsp" />
+        </div>
         <div class="text-center">
-            <input hidden name="_method" value="UPDATE">
+            <input type="hidden" name="_method" value="UPDATE">
             <button type="submit" class="py-2 px-6 transition-all bg-green-600 hover:bg-green-700 text-white rounded-sm">Update</button>
         </div>
     </form>
 </div>
 
+<script>const tagList = <%= jsonArray %>;</script>
+<script src="${pageContext.request.contextPath}/js/AddTags.js"></script>
 <script src="${pageContext.request.contextPath}/js/DateChangeOvertime.js"></script>
+<script src="${pageContext.request.contextPath}/js/TaskFormValidator.js"></script>

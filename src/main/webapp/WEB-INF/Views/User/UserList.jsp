@@ -1,5 +1,4 @@
 <%@ page import="java.util.List" %>
-<%@ page import="com.DevSync.Entities.Tasks" %>
 <%@ page import="com.DevSync.Entities.Utilisateurs" %>
 
 <%
@@ -8,6 +7,7 @@
   int i = 1;
   long userId = (long) session.getAttribute("userId");
 %>
+
 
 <div class="h-screen w-screen flex flex-col gap-4 justify-center items-center">
   <%

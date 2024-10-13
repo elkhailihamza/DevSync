@@ -32,4 +32,12 @@ public class TagService {
     public void delete(Tags entity) {
         tagRepository.delete(entity);
     }
+
+    public Tags fetchByName(String name) {
+        return tagRepository.fetchByName(name);
+    }
+
+    public void saveTagList(List<Tags> tags) {
+        tags.forEach(this::save);
+    }
 }

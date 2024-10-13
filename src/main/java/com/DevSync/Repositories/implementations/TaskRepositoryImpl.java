@@ -40,8 +40,10 @@ public class TaskRepositoryImpl implements TaskRepository {
             session.persist(entity);
             transaction.commit();
         } catch (Exception e) {
-            if (transaction != null)
+            if (transaction != null){
                 transaction.rollback();
+            }
+            e.printStackTrace();
         }
     }
 

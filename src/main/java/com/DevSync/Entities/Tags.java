@@ -2,8 +2,10 @@ package com.DevSync.Entities;
 
 import jakarta.persistence.*;
 
+import java.util.List;
+
 @Entity
-@Table(name = "tag",
+@Table(name = "tags",
 uniqueConstraints = {@UniqueConstraint(columnNames = {"id"})})
 public class Tags {
 
@@ -15,8 +17,10 @@ public class Tags {
     @Column(name = "tag_name", nullable = false)
     private String tag_name;
 
-    @Column(name = "task_id", nullable = false)
-    private long task_id;
+    @ManyToMany(mappedBy = "tags", fetch = FetchType.LAZY)
+    private List<Tasks> tasks;
+
+    public Tags() {}
 
     public long getId() {
         return id;
@@ -34,11 +38,11 @@ public class Tags {
         this.tag_name = tag_name;
     }
 
-    public long getTask_id() {
-        return task_id;
+    public List<Tasks> getTasks() {
+        return tasks;
     }
 
-    public void setTask_id(long task_id) {
-        this.task_id = task_id;
+    public void setTasks(List<Tasks> tasks) {
+        this.tasks = tasks;
     }
 }

@@ -1,7 +1,10 @@
 package com.DevSync.Servlets.Task;
 
+import com.DevSync.Controllers.TagController;
 import com.DevSync.Controllers.TaskController;
+import com.DevSync.Entities.Tags;
 import com.DevSync.Entities.Tasks;
+import com.google.gson.Gson;
 import jakarta.inject.Inject;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -11,24 +14,29 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 
 import java.io.IOException;
+import java.time.Duration;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @WebServlet("/tasks/*")
 public class TaskServlet extends HttpServlet {
 
     @Inject
     private TaskController taskController;
+    @Inject
+    private TagController tagController;
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         HttpSession session = request.getSession();
+        String username = (String) session.getAttribute("username");
+        long userId = (long) session.getAttribute("userId");
 
-        if (session.getAttribute("username") == null) {
-            response.sendRedirect(request.getContextPath() + "/auth/login");
+        if (username == null) {
+            response.sendRedirect(request.getContextPath() + "/login");
             return;
         }
-
-        long userId = (long) session.getAttribute("userId");
 
         String pathInfo = request.getPathInfo();
 
@@ -54,12 +62,19 @@ public class TaskServlet extends HttpServlet {
                 }
 
                 request.setAttribute("selectedTask", selectedTask);
+                if (!selectedTask.getTags().isEmpty()) {
+                    List<Tags> tags = selectedTask.getTags();
+                    List<String> tagNames = tags.stream().map(Tags::getTag_name).collect(Collectors.toList());
+                    Gson gson = new Gson();
+                    String jsonTagArray = gson.toJson(tagNames);
+                    request.setAttribute("tagList", jsonTagArray);
+                }
 
-                setCommonAttributes(request);
+                setCommonAttributes(request, taskId);
                 request.setAttribute("contentPage", "/WEB-INF/Views/Task/TaskUpdate.jsp");
                 break;
             case "/create":
-                setCommonAttributes(request);
+                setCommonAttributes(request, null);
                 request.setAttribute("contentPage", "/WEB-INF/Views/Task/TaskCreate.jsp");
                 break;
         }
@@ -68,7 +83,7 @@ public class TaskServlet extends HttpServlet {
     }
 
     @Override
-    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
+    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
         HttpSession session = request.getSession();
         String method = request.getParameter("_method");
         long taskId;
@@ -78,32 +93,62 @@ public class TaskServlet extends HttpServlet {
             case "CREATE":
             case "UPDATE":
                 task = Shared.assignValuesToTask(request);
-                String[] message;
-                if ("CREATE".equals(method)) {
-                    message = taskController.saveTask(task);
-                } else {
-                    message = taskController.updateTask(task);
+
+                Duration duration = Duration.between(task.getCreatedAt(), task.getDueDate());
+                long daysDifference = duration.toDays();
+
+                if (daysDifference > 3) {
+                    response.sendRedirect(request.getContextPath()+"/tasks/"+method.toLowerCase());
                 }
-                session.setAttribute(message[0], message[1]);
+
+                String[] tags = request.getParameterValues("tags[]");
+                List<Tags> tagList = new ArrayList<>();
+
+                if (tags != null && tags.length >= 3) {
+                    for (String tag : tags) {
+                        Tags existingTag = tagController.findByName(tag);
+                        if (existingTag != null) {
+                            tagList.add(existingTag);
+                        } else {
+                            Tags newTag = new Tags();
+                            newTag.setTag_name(tag);
+                            tagController.saveTag(newTag);
+                            tagList.add(newTag);
+                        }
+                    }
+                } else {
+                    response.sendRedirect(request.getContextPath()+"/tasks/"+method.toLowerCase());
+                }
+
+                task.setTags(tagList);
+
+                if ("CREATE".equals(method)) {
+                    taskController.saveTask(task);
+                    session.setAttribute("successMessage", "Task created successfully!");
+                } else {
+                    taskController.updateTask(task);
+                    session.setAttribute("successMessage", "Task updated successfully!");
+                }
                 break;
             case "DELETE":
                     task = new Tasks();
                     taskId = Long.parseLong(request.getParameter("id"));
                     task.setId(taskId);
                     taskController.deleteTask(task);
-                    request.setAttribute("successMessage", "Task successfully deleted!");
+                    session.setAttribute("successMessage", "Task successfully deleted!");
                 break;
         }
 
         response.sendRedirect(request.getContextPath()+"/tasks/list");
     }
 
-    private void setCommonAttributes(HttpServletRequest request) {
-        String formattedDate = taskController.getLocalDateFullFormat();
+    private void setCommonAttributes(HttpServletRequest request, Long taskId) {
+        String formattedDate = taskController.getLocalDate();
         List<String> statusList = taskController.getStatusList();
 
         request.setAttribute("contentPage", "/WEB-INF/Views/Task/TaskCreate.jsp");
         request.setAttribute("formattedDate", formattedDate);
         request.setAttribute("statusList", statusList);
+        request.setAttribute("taskId", taskId);
     }
 }
