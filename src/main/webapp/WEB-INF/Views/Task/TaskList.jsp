@@ -2,21 +2,23 @@
 <%@ page import="com.DevSync.Entities.Task" %>
 <%@ page import="com.DevSync.Entities.Utilisateur" %>
 <%@ page import="java.util.Objects" %>
-<%@ page import="com.DevSync.Entities.UserToken" %>
+<%@ page import="java.time.LocalDateTime" %>
 
 <%
     @SuppressWarnings("unchecked")
-    List<Task> taskList = (List<Task>) request.getAttribute("TaskList");
-    Utilisateur user = (Utilisateur) session.getAttribute("user");
-    UserToken userTokens = user.getUserTokens();
-    int updateTokens = userTokens.getDailyUpdateTokens();
-    int deleteTokens = userTokens.getMonthlyDeletionTokens();
-    int i = 1;
+    List<Task> taskList = (List<Task>) request.getAttribute("taskList");
 %>
 
 <div class="h-screen w-screen flex flex-col gap-4 justify-center items-center">
     <%
         if (taskList != null && !taskList.isEmpty()) {
+            @SuppressWarnings("unchecked")
+            List<String> statusList = (List<String>) request.getAttribute("statusList");
+            Utilisateur user = (Utilisateur) session.getAttribute("user");
+
+            int updateTokens = user.getUserTokens().getDailyUpdateTokens();
+            int deleteTokens = user.getUserTokens().getMonthlyDeletionTokens();
+            int i = 1;
     %>
     <div class="relative overflow-x-auto shadow-md sm:rounded-lg">
         <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
@@ -53,7 +55,18 @@
                     <%= task.getDueDate() %>
                 </td>
                 <td class="px-6 py-4">
-                    <%= task.getStatus() %>
+                    <select data-id="<%= task.getId() %>" name="task_status" class="status_select p-1 border text-sm rounded"
+                            <%= task.getDueDate().isBefore(LocalDateTime.now()) ? "disabled" : "" %> >
+                        <%
+                            for (String s : statusList) {
+                        %>
+                        <option value="<%= s %>" <%= task.getStatus() != null && task.getStatus().getStatus().equals(s) ? "selected" : "" %> >
+                            <%= s %>
+                        </option>
+                        <%
+                            }
+                        %>
+                    </select>
                 </td>
                 <td class="px-6 py-4">
                     <%
@@ -75,7 +88,6 @@
                         <%if (user.isManager() || task.getAssignee() == null) {%>
                             <form action="${pageContext.request.contextPath}/tasks/assign" method="post">
                                 <input type="hidden" name="taskId" value="<%= task.getId() %>" />
-                                <input type="hidden" name="_method" value="ASSIGN" />
                                 <button class="task bg-blue-500 hover:bg-blue-700 transition-all p-1 rounded-md">
                                     <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg>
                                 </button>
@@ -131,3 +143,8 @@
         }
     %>
 </div>
+
+<script type="text/javascript">
+    const contextPath = '<%= request.getContextPath() %>';
+</script>
+<script src="${pageContext.request.contextPath}/js/SelectStatus.js"></script>

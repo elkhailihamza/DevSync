@@ -11,7 +11,6 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 
 import java.io.IOException;
-import java.util.List;
 
 @WebServlet("/users/*")
 public class UserServlet extends HttpServlet {
@@ -36,11 +35,6 @@ public class UserServlet extends HttpServlet {
             return;
         }
 
-        //            case "/list":
-        //                request.setAttribute("contentPage", "/WEB-INF/Views/User/UserList.jsp");
-        //                List<Utilisateur> users = utilisateurController.getAllUsers();
-        //                request.setAttribute("UserList", users);
-        //                break;
         if (pathInfo.equals("/update")) {
             long userId = Long.parseLong(request.getParameter("id"));
             Utilisateur selectedUser = utilisateurController.getCertainUser(userId);

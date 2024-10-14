@@ -6,6 +6,7 @@ import com.DevSync.Controllers.UtilisateurController;
 import com.DevSync.Entities.Tag;
 import com.DevSync.Entities.Task;
 import com.DevSync.Entities.Utilisateur;
+import com.DevSync.Enums.Status;
 import com.google.gson.Gson;
 import jakarta.inject.Inject;
 import jakarta.servlet.ServletException;
@@ -17,6 +18,7 @@ import jakarta.servlet.http.HttpSession;
 
 import java.io.IOException;
 import java.time.Duration;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -52,9 +54,11 @@ public class TaskServlet extends HttpServlet {
         switch (pathInfo) {
             case "/list":
                 List<Task> tasks = taskController.fetchAllTasks();
+                List<String> statusList = taskController.getStatusList();
 
                 request.setAttribute("contentPage", "/WEB-INF/Views/Task/TaskList.jsp");
-                request.setAttribute("TaskList", tasks);
+                request.setAttribute("taskList", tasks);
+                request.setAttribute("statusList", statusList);
                 break;
             case "/update":
                 long taskId = Long.parseLong(request.getParameter("id"));
@@ -106,66 +110,56 @@ public class TaskServlet extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
         HttpSession session = request.getSession();
         Utilisateur user = (Utilisateur) session.getAttribute("user");
-        String method = request.getParameter("_method");
         long taskId;
         long userId;
         Task task;
 
-        switch (method) {
-            case "CREATE":
-            case "UPDATE":
+        String pathInfo = request.getPathInfo();
+
+        if (pathInfo == null) {
+            response.sendRedirect(request.getContextPath()+"/tasks/list");
+            return;
+        }
+
+        switch (pathInfo) {
+            case "/save":
+                task = assignValuesToTask(request, response, "/create");
+                taskController.saveTask(task);
+                session.setAttribute("successMessage", "Task created successfully!");
+                break;
+            case "/put":
                 // send user back if they decide to send request without update tokens.
-                if ("UPDATE".equals(method)) {
-                    if (user.getUserTokens().getDailyUpdateTokens() == 0) {
-                        session.setAttribute("errorMessage", "You do not have enough update tokens.");
-                        response.sendRedirect(request.getContextPath() + "/tasks/list");
-                        return;
-                    }
-                }
-
-                task = Shared.assignValuesToTask(request);
-
-                Duration duration = Duration.between(task.getCreatedAt(), task.getDueDate());
-                long daysDifference = duration.toDays();
-
-                if (daysDifference > 3) {
-                    session.setAttribute("errorMessage", "The task due date cannot be more than 3 days from the creation date.");
-                    response.sendRedirect(request.getContextPath() + "/tasks/" + method.toLowerCase());
+                if (user.getUserTokens().getDailyUpdateTokens() == 0) {
+                    session.setAttribute("errorMessage", "You do not have enough update tokens.");
+                    response.sendRedirect(request.getContextPath() + "/tasks/list");
                     return;
                 }
 
-                String[] tags = request.getParameterValues("tags[]");
-                List<Tag> tagList = new ArrayList<>();
+                taskId = Long.parseLong(request.getParameter("id"));
+                Task existingTask = taskController.getTaskById(taskId);
+                task = assignValuesToTask(request, response, "/update");
 
-                if (tags != null && tags.length >= 3) {
-                    for (String tag : tags) {
-                        Tag existingTag = tagController.findByName(tag);
-                        if (existingTag != null) {
-                            tagList.add(existingTag);
-                        } else {
-                            Tag newTag = new Tag();
-                            newTag.setTag_name(tag);
-                            tagController.saveTag(newTag);
-                            tagList.add(newTag);
-                        }
+                if (existingTask != null) {
+                    Duration duration = Duration.between(existingTask.getDueDate(), task.getDueDate());
+                    long daysDifference = duration.toDays();
+
+                    if (daysDifference > 3) {
+                        session.setAttribute("errorMessage", "The task due date cannot be more than 3 days from the creation date.");
+                        response.sendRedirect(request.getContextPath() + "/tasks" + pathInfo);
+                        return;
                     }
-                } else {
-                    response.sendRedirect(request.getContextPath()+"/tasks/"+method.toLowerCase());
-                }
 
-                task.setTags(tagList);
-
-                if ("CREATE".equals(method)) {
-                    taskController.saveTask(task);
-                    session.setAttribute("successMessage", "Task created successfully!");
-                } else {
                     taskController.updateTask(task);
-                    user.getUserTokens().setDailyUpdateTokens(user.getUserTokens().getDailyUpdateTokens() - 1);
-                    utilisateurController.updateUser(user);
+                    if (!user.isManager() || !Objects.equals(task.getAssignee().getId(), user.getId())) {
+                        user.getUserTokens().setDailyUpdateTokens(user.getUserTokens().getDailyUpdateTokens() - 1);
+                        utilisateurController.updateUser(user);
+                    }
                     session.setAttribute("successMessage", "Task updated successfully!");
+                } else {
+                    session.setAttribute("errorMessage", "Task cannot be found!");
                 }
                 break;
-            case "DELETE":
+            case "/delete":
                 taskId = Long.parseLong(request.getParameter("id"));
                 task = taskController.getTaskById(taskId);
 
@@ -191,7 +185,7 @@ public class TaskServlet extends HttpServlet {
                     session.setAttribute("errorMessage", "You do not have enough deletion tokens.");
                 }
                 break;
-            case "ASSIGN":
+            case "/assign":
                 boolean assignedByManager = false;
                 user = (Utilisateur) session.getAttribute("user");
                 if (request.getParameter("taskId") == null) {
@@ -214,6 +208,34 @@ public class TaskServlet extends HttpServlet {
                 taskController.assignTaskToUser(taskId, user, assignedByManager);
                 session.setAttribute("successMessage", "Task successfully assigned!");
                 break;
+            case "/setStatus":
+                taskId = Long.parseLong(request.getParameter("id"));
+                task = taskController.getTaskById(taskId);
+                Gson gson = new Gson();
+
+                if (task != null) {
+                    if (task.getDueDate().isBefore(LocalDateTime.parse(taskController.getLocalDate()))) {
+                        String status = request.getParameter("status");
+                        task.setStatus(Status.fromDBValue(status));
+                        taskController.updateTask(task);
+
+                        String jsonResponse = gson.toJson("Task status updated successfully");
+                        response.setStatus(HttpServletResponse.SC_OK);
+                        response.getWriter().write(jsonResponse);
+                    } else {
+                        response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+                        String jsonResponse = gson.toJson("Due date cannot be!");
+                        response.getWriter().write(jsonResponse);
+                    }
+                } else {
+                    response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+                    String jsonResponse = gson.toJson("Task not found");
+                    response.getWriter().write(jsonResponse);
+                }
+                return;
+            default:
+                response.sendError(HttpServletResponse.SC_NOT_FOUND, "Unknown request path.");
+                return;
         }
 
         response.sendRedirect(request.getContextPath()+"/tasks/list");
@@ -227,5 +249,57 @@ public class TaskServlet extends HttpServlet {
         request.setAttribute("formattedDate", formattedDate);
         request.setAttribute("statusList", statusList);
         request.setAttribute("taskId", taskId);
+    }
+
+    private List<Tag> getTagList(HttpServletRequest request, HttpServletResponse response, String pathInfo) throws IOException {
+        String[] tags = request.getParameterValues("tags[]");
+        List<Tag> tagList = new ArrayList<>();
+
+        if (tags != null && tags.length >= 3) {
+            for (String tag : tags) {
+                Tag existingTag = tagController.findByName(tag);
+                if (existingTag != null) {
+                    tagList.add(existingTag);
+                } else {
+                    Tag newTag = new Tag();
+                    newTag.setTag_name(tag);
+                    tagController.saveTag(newTag);
+                    tagList.add(newTag);
+                }
+            }
+        } else {
+            response.sendRedirect(request.getContextPath()+"/tasks"+pathInfo);
+        }
+
+        return tagList;
+    }
+
+    public Task assignValuesToTask(HttpServletRequest request, HttpServletResponse response, String pathInfo) throws IOException {
+        HttpSession session = request.getSession();
+        Task task = new Task();
+
+        if (request.getParameter("id") != null) {
+            long taskId = Long.parseLong(request.getParameter("id"));
+            task.setId(taskId);
+        }
+
+        task.setCreator((Utilisateur) session.getAttribute("user"));
+        task.setTitle(request.getParameter("task_name"));
+        task.setDescription(request.getParameter("task_description"));
+
+        String createdAt = request.getParameter("task_createdAT");
+        if (createdAt != null && !createdAt.isEmpty()) {
+            task.setCreatedAt(LocalDateTime.parse(createdAt));
+        }
+
+        String dueDate = request.getParameter("task_dueDate");
+        if (dueDate != null && !dueDate.isEmpty()) {
+            task.setDueDate(LocalDateTime.parse(dueDate));
+        }
+
+        List<Tag> tagList = getTagList(request, response, pathInfo);
+        task.setTags(tagList);
+
+        return task;
     }
 }

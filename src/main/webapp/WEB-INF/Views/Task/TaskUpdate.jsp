@@ -18,7 +18,7 @@
         <div class="w-full text-center">
             <h2 class="text-2xl"><%= selectedTask.getTitle() %></h2>
         </div>
-        <form id="task-form" class="w-full max-w-md min-w-fit text-lg md:text-md sm:text-sm" action="${pageContext.request.contextPath}/tasks/update?id=<%=selectedTask.getId()%>" method="post">
+        <form id="task-form" class="w-full max-w-md min-w-fit text-lg md:text-md sm:text-sm" action="${pageContext.request.contextPath}/tasks/put?id=<%=selectedTask.getId()%>" method="post">
             <div class="mb-4">
                 <label class="grid gap-4">
                     <span class="bold">Title<span class="text-red-900"> *</span></span>
@@ -43,26 +43,11 @@
                     <input name="task_dueDate" value="<%= selectedTask.getDueDate() %>" class="border p-2" type="datetime-local" required/>
                 </label>
             </div>
-            <div class="mb-6">
-                <label class="flex justify-between items-center">
-                    <span class="bold">Status<span class="text-red-900"> *</span></span>
-                    <select name="task_status" class="p-1 text-sm rounded">
-                        <%
-                            for (String s : statusList) {
-                        %>
-                        <option value="<%= s %>" <%= selectedTask.getStatus() != null && selectedTask.getStatus().getStatus().equals(s) ? "selected" : "" %>><%= s %></option>
-                        <%
-                            }
-                        %>
-                    </select>
-                </label>
-            </div>
             <div class="mb-6 w-full flex justify-between items-center">
                 <input type="hidden" id="tagsInput" name="tags" />
                 <jsp:include page="/WEB-INF/Views/Components/_tags.jsp" />
             </div>
             <div class="text-center">
-                <input type="hidden" name="_method" value="UPDATE">
                 <button type="submit" class="py-2 px-6 transition-all bg-green-600 hover:bg-green-700 text-white rounded-sm">Update</button>
             </div>
         </form>
