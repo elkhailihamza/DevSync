@@ -37,6 +37,9 @@ public class Utilisateur {
     @OneToMany(mappedBy = "assignee", cascade = CascadeType.ALL)
     private List<Task> assignedTasks;
 
+    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private UserToken userTokens;
+
     public long getId() {
         return id;
     }
@@ -107,5 +110,13 @@ public class Utilisateur {
 
     public void setAssignedTasks(List<Task> assignedTasks) {
         this.assignedTasks = assignedTasks;
+    }
+
+    public UserToken getUserTokens() {
+        return userTokens;
+    }
+
+    public void setUserTokens(UserToken userTokens) {
+        this.userTokens = userTokens;
     }
 }

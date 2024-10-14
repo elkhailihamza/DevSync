@@ -1,5 +1,6 @@
 package com.DevSync.Services;
 
+import com.DevSync.Entities.UserToken;
 import com.DevSync.Entities.Utilisateur;
 import com.DevSync.Repositories.UtilisateurRepository;
 import jakarta.enterprise.context.ApplicationScoped;
@@ -23,6 +24,10 @@ public class UtilisateurService {
     }
 
     public void save(Utilisateur entity) {
+        UserToken userTokens = new UserToken();
+        entity.setUserTokens(userTokens);
+        userTokens.setUser(entity);
+
         utilisateurRepository.save(entity);
     }
 
