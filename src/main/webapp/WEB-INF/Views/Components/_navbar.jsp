@@ -14,19 +14,6 @@
                 <li>
                     <a href="<%= request.getContextPath() %>/tasks/list" class="block py-2 px-3 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 md:p-0 dark:text-white md:dark:hover:text-blue-500 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent">Backlog</a>
                 </li>
-                <%
-                        String isManagerParam = (String) session.getAttribute("isManager");
-                        boolean isManager = isManagerParam != null && isManagerParam.equalsIgnoreCase("true");
-                        if (isManager) {
-                            %>
-                                <li>
-                                    <a href="<%= request.getContextPath() %>/users/list" class="block py-2 px-3 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 md:p-0 dark:text-white md:dark:hover:text-blue-500 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent">Users</a>
-                                </li>
-                            <%
-                        }
-                    }
-                    if (session.getAttribute("username") != null) {
-                %>
                 <li>
                     <a href="<%= request.getContextPath() %>/auth/logout" class="block py-2 px-3 text-red-900 rounded hover:bg-red-100 md:hover:bg-transparent md:border-0 md:hover:text-red-700 md:p-0 dark:text-white md:dark:hover:text-red-500 dark:hover:bg-red-700 dark:hover:text-white md:dark:hover:bg-transparent">Logout</a>
                 </li>

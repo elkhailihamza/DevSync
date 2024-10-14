@@ -1,6 +1,7 @@
 package com.DevSync.Services;
 
-import com.DevSync.Entities.Utilisateurs;
+import com.DevSync.Entities.UserToken;
+import com.DevSync.Entities.Utilisateur;
 import com.DevSync.Repositories.UtilisateurRepository;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
@@ -14,32 +15,36 @@ public class UtilisateurService {
     @Inject
     private UtilisateurRepository utilisateurRepository;
 
-    public Utilisateurs findById(long id) {
+    public Utilisateur findById(long id) {
         return utilisateurRepository.findById(id);
     }
 
-    public List<Utilisateurs> fetchAll() {
+    public List<Utilisateur> fetchAll() {
         return utilisateurRepository.fetchAll();
     }
 
-    public void save(Utilisateurs entity) {
+    public void save(Utilisateur entity) {
+        UserToken userTokens = new UserToken();
+        entity.setUserTokens(userTokens);
+        userTokens.setUser(entity);
+
         utilisateurRepository.save(entity);
     }
 
-    public void update (Utilisateurs entity) {
+    public void update (Utilisateur entity) {
         utilisateurRepository.update(entity);
     }
 
-    public void delete(Utilisateurs entity) {
+    public void delete(Utilisateur entity) {
         utilisateurRepository.delete(entity);
     }
 
-    public Utilisateurs fetchUserByUsername(String username) {
+    public Utilisateur fetchUserByUsername(String username) {
         return utilisateurRepository.fetchUserByUsername(username);
     }
 
     public boolean authenticate(String username, String password) {
-        Utilisateurs user = fetchUserByUsername(username);
+        Utilisateur user = fetchUserByUsername(username);
         if (!Objects.equals(user, null)) {
             String userName = user.getUser_name();
             String userPass = user.getUser_pass();
@@ -48,7 +53,7 @@ public class UtilisateurService {
         return false;
     }
 
-    public Utilisateurs fetchUserByEmail(String email) {
+    public Utilisateur fetchUserByEmail(String email) {
         return utilisateurRepository.fetchUserByEmail(email);
     }
 

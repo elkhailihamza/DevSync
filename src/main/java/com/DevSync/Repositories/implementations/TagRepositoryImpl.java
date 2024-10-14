@@ -1,6 +1,6 @@
 package com.DevSync.Repositories.implementations;
 
-import com.DevSync.Entities.Tags;
+import com.DevSync.Entities.Tag;
 import com.DevSync.Repositories.TagRepository;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
@@ -18,22 +18,22 @@ public class TagRepositoryImpl implements TagRepository {
     private SessionFactory sessionFactory;
 
     @Override
-    public Tags findById(Long id) {
+    public Tag findById(Long id) {
         try (Session session = sessionFactory.openSession()) {
-            return session.get(Tags.class, id);
+            return session.get(Tag.class, id);
         }
     }
 
     @Override
-    public List<Tags> fetchAll() {
+    public List<Tag> fetchAll() {
         try (Session session = sessionFactory.openSession()) {
-            Query<Tags> query = session.createQuery("FROM Tags", Tags.class);
+            Query<Tag> query = session.createQuery("FROM Tag", Tag.class);
             return query.list();
         }
     }
 
     @Override
-    public void save(Tags entity) {
+    public void save(Tag entity) {
         Transaction transaction = null;
         try (Session session = sessionFactory.openSession()) {
             transaction = session.beginTransaction();
@@ -46,7 +46,7 @@ public class TagRepositoryImpl implements TagRepository {
     }
 
     @Override
-    public void update(Tags entity) {
+    public void update(Tag entity) {
         Transaction transaction = null;
 
         try (Session session = sessionFactory.openSession()) {
@@ -60,12 +60,12 @@ public class TagRepositoryImpl implements TagRepository {
     }
 
     @Override
-    public void delete(Tags entity) {
+    public void delete(Tag entity) {
         Transaction transaction = null;
 
         try (Session session = sessionFactory.openSession()) {
             transaction = session.beginTransaction();
-            Query<Void> query = session.createQuery("DELETE FROM Tags WHERE id = :tagId", Void.class);
+            Query<Void> query = session.createQuery("DELETE FROM Tag WHERE id = :tagId", Void.class);
             query.setParameter("tagId", entity.getId());
             query.executeUpdate();
             transaction.commit();
@@ -76,9 +76,9 @@ public class TagRepositoryImpl implements TagRepository {
     }
 
     @Override
-    public Tags fetchByName(String name) {
+    public Tag fetchByName(String name) {
         try (Session session = sessionFactory.openSession()) {
-            return session.createQuery("FROM Tags t WHERE t.tag_name = :name", Tags.class)
+            return session.createQuery("FROM Tag t WHERE t.tag_name = :name", Tag.class)
                     .setParameter("name", name)
                     .uniqueResult();
         }

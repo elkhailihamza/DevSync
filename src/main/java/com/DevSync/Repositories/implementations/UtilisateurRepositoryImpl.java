@@ -1,6 +1,6 @@
 package com.DevSync.Repositories.implementations;
 
-import com.DevSync.Entities.Utilisateurs;
+import com.DevSync.Entities.Utilisateur;
 import com.DevSync.Repositories.UtilisateurRepository;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
@@ -18,22 +18,22 @@ public class UtilisateurRepositoryImpl implements UtilisateurRepository {
     private SessionFactory sessionFactory;
 
     @Override
-    public Utilisateurs findById(Long id) {
+    public Utilisateur findById(Long id) {
         try (Session session = sessionFactory.openSession()) {
-            return session.get(Utilisateurs.class, id);
+            return session.get(Utilisateur.class, id);
         }
     }
 
     @Override
-    public List<Utilisateurs> fetchAll() {
+    public List<Utilisateur> fetchAll() {
         try (Session session = sessionFactory.openSession()) {
-            Query<Utilisateurs> query = session.createQuery("FROM Utilisateurs", Utilisateurs.class);
+            Query<Utilisateur> query = session.createQuery("FROM Utilisateur", Utilisateur.class);
             return query.list();
         }
     }
 
     @Override
-    public void save(Utilisateurs entity) {
+    public void save(Utilisateur entity) {
         Transaction transaction = null;
         try (Session session = sessionFactory.openSession()) {
             transaction = session.beginTransaction();
@@ -46,7 +46,7 @@ public class UtilisateurRepositoryImpl implements UtilisateurRepository {
     }
 
     @Override
-    public void update(Utilisateurs entity) {
+    public void update(Utilisateur entity) {
         Transaction transaction = null;
 
         try (Session session = sessionFactory.openSession()) {
@@ -60,12 +60,12 @@ public class UtilisateurRepositoryImpl implements UtilisateurRepository {
     }
 
     @Override
-    public void delete(Utilisateurs entity) {
+    public void delete(Utilisateur entity) {
         Transaction transaction = null;
 
         try (Session session = sessionFactory.openSession()) {
             transaction = session.beginTransaction();
-            Utilisateurs user = session.get(Utilisateurs.class, entity.getId());
+            Utilisateur user = session.get(Utilisateur.class, entity.getId());
             if (user != null) {
                 session.remove(user);
                 transaction.commit();
@@ -79,9 +79,9 @@ public class UtilisateurRepositoryImpl implements UtilisateurRepository {
     }
 
     @Override
-    public Utilisateurs fetchUserByUsername(String username) {
+    public Utilisateur fetchUserByUsername(String username) {
         try (Session session = sessionFactory.openSession()) {
-            Query<Utilisateurs> query = session.createQuery("FROM Utilisateurs WHERE user_name = :userName", Utilisateurs.class);
+            Query<Utilisateur> query = session.createQuery("FROM Utilisateur WHERE user_name = :userName", Utilisateur.class);
             query.setParameter("userName", username);
             return query.uniqueResult();
         } catch (Exception e) {
@@ -90,9 +90,9 @@ public class UtilisateurRepositoryImpl implements UtilisateurRepository {
     }
 
     @Override
-    public Utilisateurs fetchUserByEmail(String email) {
+    public Utilisateur fetchUserByEmail(String email) {
         try (Session session = sessionFactory.openSession()) {
-            Query<Utilisateurs> query = session.createQuery("FROM Utilisateurs WHERE email = :email", Utilisateurs.class);
+            Query<Utilisateur> query = session.createQuery("FROM Utilisateur WHERE email = :email", Utilisateur.class);
             query.setParameter("email", email);
             return query.uniqueResult();
         } catch (Exception e) {

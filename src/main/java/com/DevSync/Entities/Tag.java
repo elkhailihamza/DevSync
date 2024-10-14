@@ -7,7 +7,7 @@ import java.util.List;
 @Entity
 @Table(name = "tags",
 uniqueConstraints = {@UniqueConstraint(columnNames = {"id"})})
-public class Tags {
+public class Tag {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -18,9 +18,9 @@ public class Tags {
     private String tag_name;
 
     @ManyToMany(mappedBy = "tags", fetch = FetchType.LAZY)
-    private List<Tasks> tasks;
+    private List<Task> tasks;
 
-    public Tags() {}
+    public Tag() {}
 
     public long getId() {
         return id;
@@ -38,11 +38,11 @@ public class Tags {
         this.tag_name = tag_name;
     }
 
-    public List<Tasks> getTasks() {
+    public List<Task> getTasks() {
         return tasks;
     }
 
-    public void setTasks(List<Tasks> tasks) {
+    public void setTasks(List<Task> tasks) {
         this.tasks = tasks;
     }
 }

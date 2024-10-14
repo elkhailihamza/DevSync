@@ -7,7 +7,7 @@ import java.util.List;
 @Entity
 @Table(name="utilisateurs",
     uniqueConstraints={@UniqueConstraint(columnNames={"id"})})
-public class Utilisateurs {
+public class Utilisateur {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false, unique = true)
@@ -32,10 +32,13 @@ public class Utilisateurs {
     private boolean manager;
 
     @OneToMany(mappedBy = "creator", cascade = CascadeType.ALL)
-    private List<Tasks> createdTasks;
+    private List<Task> createdTasks;
 
     @OneToMany(mappedBy = "assignee", cascade = CascadeType.ALL)
-    private List<Tasks> assignedTasks;
+    private List<Task> assignedTasks;
+
+    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private UserToken userTokens;
 
     public long getId() {
         return id;
@@ -93,19 +96,27 @@ public class Utilisateurs {
         this.manager = manager;
     }
 
-    public List<Tasks> getCreatedTasks() {
+    public List<Task> getCreatedTasks() {
         return createdTasks;
     }
 
-    public void setCreatedTasks(List<Tasks> createdTasks) {
+    public void setCreatedTasks(List<Task> createdTasks) {
         this.createdTasks = createdTasks;
     }
 
-    public List<Tasks> getAssignedTasks() {
+    public List<Task> getAssignedTasks() {
         return assignedTasks;
     }
 
-    public void setAssignedTasks(List<Tasks> assignedTasks) {
+    public void setAssignedTasks(List<Task> assignedTasks) {
         this.assignedTasks = assignedTasks;
+    }
+
+    public UserToken getUserTokens() {
+        return userTokens;
+    }
+
+    public void setUserTokens(UserToken userTokens) {
+        this.userTokens = userTokens;
     }
 }

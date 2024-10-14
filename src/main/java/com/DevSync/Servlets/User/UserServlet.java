@@ -1,7 +1,7 @@
 package com.DevSync.Servlets.User;
 
 import com.DevSync.Controllers.UtilisateurController;
-import com.DevSync.Entities.Utilisateurs;
+import com.DevSync.Entities.Utilisateur;
 import jakarta.inject.Inject;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -11,7 +11,6 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 
 import java.io.IOException;
-import java.util.List;
 
 @WebServlet("/users/*")
 public class UserServlet extends HttpServlet {
@@ -36,27 +35,19 @@ public class UserServlet extends HttpServlet {
             return;
         }
 
-        switch (pathInfo) {
-            case "/list":
-                request.setAttribute("contentPage", "/WEB-INF/Views/User/UserList.jsp");
-                List<Utilisateurs> users = utilisateurController.getAllUsers();
-                request.setAttribute("UserList", users);
-                break;
-            case "/update":
-                long userId = Long.parseLong(request.getParameter("id"));
-                Utilisateurs selectedUser = utilisateurController.getCertainUser(userId);
+        if (pathInfo.equals("/update")) {
+            long userId = Long.parseLong(request.getParameter("id"));
+            Utilisateur selectedUser = utilisateurController.getCertainUser(userId);
 
-                if (selectedUser == null) {
-                    response.sendError(HttpServletResponse.SC_NOT_FOUND, "User not found");
-                    return;
-                }
+            if (selectedUser == null) {
+                response.sendError(HttpServletResponse.SC_NOT_FOUND, "User not found");
+                return;
+            }
 
-                request.setAttribute("contentPage", "/WEB-INF/Views/User/UserUpdate.jsp");
-                request.setAttribute("selectedUser", selectedUser);
-                break;
-            default:
-                response.sendRedirect(request.getContextPath());
-                break;
+            request.setAttribute("contentPage", "/WEB-INF/Views/User/UserUpdate.jsp");
+            request.setAttribute("selectedUser", selectedUser);
+        } else {
+            response.sendRedirect(request.getContextPath());
         }
 
         request.getRequestDispatcher("/WEB-INF/app.jsp").forward(request, response);
@@ -66,7 +57,7 @@ public class UserServlet extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
         String method = request.getParameter("_method");
         long userId = Long.parseLong(request.getParameter("id"));
-        Utilisateurs user = utilisateurController.getCertainUser(userId);
+        Utilisateur user = utilisateurController.getCertainUser(userId);
         switch (method) {
             case "UPDATE":
                 Shared.assignValuesToUser(request, user);
