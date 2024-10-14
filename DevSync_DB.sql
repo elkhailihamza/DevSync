@@ -23,7 +23,7 @@ CREATE TABLE IF NOT EXISTS tasks(
 	status status_enum NOT NULL,
 	creator_id INT NOT NULL,
 	assignee_id INT,
-	assignedByManager BOOLEAN NOT NULL DEFAULT false,
+	assignedbymanager BOOLEAN NOT NULL DEFAULT false,
 
 	CONSTRAINT start_before_end CHECK (createdAt < dueDate),
 	CONSTRAINT creator_fk FOREIGN KEY (creator_id) REFERENCES utilisateurs(id),
@@ -43,4 +43,13 @@ CREATE TABLE IF NOT EXISTS task_tags (
     CONSTRAINT task_tag_fk FOREIGN KEY (task_id) REFERENCES tasks(id) ON DELETE CASCADE,
     CONSTRAINT tag_task_fk FOREIGN KEY (tag_id) REFERENCES tags(id) ON DELETE CASCADE,
     PRIMARY KEY (task_id, tag_id)
+);
+
+CREATE TABLE IF NOT EXISTS user_tokens (
+    id SERIAL PRIMARY KEY,
+    user_id INT REFERENCES utilisateurs(id),
+    daily_update_tokens INT DEFAULT 2,
+    monthly_deletion_tokens INT DEFAULT 1,
+    last_reset_date DATE,
+    UNIQUE(user_id)
 );

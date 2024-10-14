@@ -1,5 +1,6 @@
 package com.DevSync.Utils;
 
+import com.DevSync.Entities.UserToken;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.enterprise.inject.Produces;
 import org.hibernate.SessionFactory;
@@ -24,6 +25,7 @@ public class HibernateUtil {
             configuration.addAnnotatedClass(Utilisateur.class);
             configuration.addAnnotatedClass(Task.class);
             configuration.addAnnotatedClass(Tag.class);
+            configuration.addAnnotatedClass(UserToken.class);
 
             ServiceRegistry serviceRegistry = new StandardServiceRegistryBuilder()
                     .applySettings(configuration.getProperties()).build();
