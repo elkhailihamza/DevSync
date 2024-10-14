@@ -1,6 +1,6 @@
 package com.DevSync.Services;
 
-import com.DevSync.Entities.Tags;
+import com.DevSync.Entities.Tag;
 import com.DevSync.Repositories.TagRepository;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
@@ -13,23 +13,31 @@ public class TagService {
     @Inject
     private TagRepository tagRepository;
 
-    public Tags findById(long id) {
+    public Tag findById(long id) {
         return tagRepository.findById(id);
     }
 
-    public List<Tags> fetchAll() {
+    public List<Tag> fetchAll() {
         return tagRepository.fetchAll();
     }
 
-    public void save(Tags entity) {
+    public void save(Tag entity) {
         tagRepository.save(entity);
     }
 
-    public void update (Tags entity) {
+    public void update (Tag entity) {
         tagRepository.update(entity);
     }
 
-    public void delete(Tags entity) {
+    public void delete(Tag entity) {
         tagRepository.delete(entity);
+    }
+
+    public Tag fetchByName(String name) {
+        return tagRepository.fetchByName(name);
+    }
+
+    public void saveTagList(List<Tag> tags) {
+        tags.forEach(this::save);
     }
 }

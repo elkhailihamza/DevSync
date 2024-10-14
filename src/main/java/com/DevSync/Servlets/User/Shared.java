@@ -1,10 +1,10 @@
 package com.DevSync.Servlets.User;
 
-import com.DevSync.Entities.Utilisateurs;
+import com.DevSync.Entities.Utilisateur;
 import jakarta.servlet.http.HttpServletRequest;
 
 public class Shared {
-    public static void assignValuesToUser(HttpServletRequest request, Utilisateurs user) {
+    public static void assignValuesToUser(HttpServletRequest request, Utilisateur user) {
 
         String username = request.getParameter("user_name");
         String nom = request.getParameter("user_nom");
