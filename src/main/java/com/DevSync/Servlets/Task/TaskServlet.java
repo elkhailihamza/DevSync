@@ -14,11 +14,13 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
+import org.hibernate.Hibernate;
 
 import java.io.IOException;
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 @WebServlet("/tasks/*")
@@ -99,22 +101,33 @@ public class TaskServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
         HttpSession session = request.getSession();
+        Utilisateur user = (Utilisateur) session.getAttribute("user");
         String method = request.getParameter("_method");
         long taskId;
         long userId;
         Task task;
-        Utilisateur user;
 
         switch (method) {
             case "CREATE":
             case "UPDATE":
+                // send user back if they decide to send request without update tokens.
+                if ("UPDATE".equals(method)) {
+                    if (user.getUserTokens().getDailyUpdateTokens() == 0) {
+                        session.setAttribute("errorMessage", "You do not have enough update tokens.");
+                        response.sendRedirect(request.getContextPath() + "/tasks/list");
+                        return;
+                    }
+                }
+
                 task = Shared.assignValuesToTask(request);
 
                 Duration duration = Duration.between(task.getCreatedAt(), task.getDueDate());
                 long daysDifference = duration.toDays();
 
                 if (daysDifference > 3) {
-                    response.sendRedirect(request.getContextPath()+"/tasks/"+method.toLowerCase());
+                    session.setAttribute("errorMessage", "The task due date cannot be more than 3 days from the creation date.");
+                    response.sendRedirect(request.getContextPath() + "/tasks/" + method.toLowerCase());
+                    return;
                 }
 
                 String[] tags = request.getParameterValues("tags[]");
@@ -143,15 +156,36 @@ public class TaskServlet extends HttpServlet {
                     session.setAttribute("successMessage", "Task created successfully!");
                 } else {
                     taskController.updateTask(task);
+                    user.getUserTokens().setDailyUpdateTokens(user.getUserTokens().getDailyUpdateTokens() - 1);
+                    utilisateurController.updateUser(user);
                     session.setAttribute("successMessage", "Task updated successfully!");
                 }
                 break;
             case "DELETE":
-                    task = new Task();
-                    taskId = Long.parseLong(request.getParameter("id"));
-                    task.setId(taskId);
+                taskId = Long.parseLong(request.getParameter("id"));
+                task = taskController.getTaskById(taskId);
+
+                if (task == null) {
+                    session.setAttribute("errorMessage", "Task not found.");
+                    response.sendRedirect(request.getContextPath() + "/tasks/list");
+                    return;
+                }
+
+                boolean hasDeletionTokens = user.getUserTokens().getMonthlyDeletionTokens() > 0;
+                boolean isAssignee = Objects.equals(user.getUser_name(), task.getCreator().getUser_name());
+
+                // Check if user has enough monthly deletion tokens
+                if (hasDeletionTokens || isAssignee) {
                     taskController.deleteTask(task);
+                    if (!isAssignee) {
+                        user.getUserTokens().setMonthlyDeletionTokens(user.getUserTokens().getMonthlyDeletionTokens() - 1);
+                        utilisateurController.updateUser(user);
+                    }
+
                     session.setAttribute("successMessage", "Task successfully deleted!");
+                } else {
+                    session.setAttribute("errorMessage", "You do not have enough deletion tokens.");
+                }
                 break;
             case "ASSIGN":
                 boolean assignedByManager = false;

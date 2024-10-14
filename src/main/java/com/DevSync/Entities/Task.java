@@ -32,7 +32,7 @@ public class Task {
     @Column(name = "status", nullable = false)
     private Status status;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "creator_id", nullable = false)
     private Utilisateur creator;
 
@@ -48,8 +48,8 @@ public class Task {
     )
     private List<Tag> tags;
 
-    @Column(name = "assigned_by_manager", nullable = false)
-    private Boolean assignedByManager;
+    @Column(name = "assignedbymanager", nullable = false)
+    private Boolean assignedByManager = false;
 
     public long getId() {
         return id;

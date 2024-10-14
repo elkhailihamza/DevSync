@@ -21,14 +21,11 @@ CREATE TABLE IF NOT EXISTS tasks(
 	createdAt TIMESTAMP(0) WITHOUT TIME ZONE DEFAULT NOW(),
 	dueDate TIMESTAMP(0) WITHOUT TIME ZONE DEFAULT NOW() + INTERVAL '1 day',
 	status status_enum NOT NULL,
-	creator_id INT NOT NULL,
-	assignee_id INT,
+	creator_id INT REFERENCES utilisateurs(id) ON DELETE CASCADE ON UPDATE CASCADE NOT NULL,
+	assignee_id INT REFERENCES utilisateurs(id) ON DELETE CASCADE ON UPDATE CASCADE,
 	assignedbymanager BOOLEAN NOT NULL DEFAULT false,
 
-	CONSTRAINT start_before_end CHECK (createdAt < dueDate),
-	CONSTRAINT creator_fk FOREIGN KEY (creator_id) REFERENCES utilisateurs(id),
-    CONSTRAINT assignee_fk FOREIGN KEY (assignee_id) REFERENCES utilisateurs(id)
-	
+	CONSTRAINT start_before_end CHECK (createdAt < dueDate)
 );
 
 CREATE TABLE IF NOT EXISTS tags(
@@ -37,11 +34,9 @@ CREATE TABLE IF NOT EXISTS tags(
 );
 
 CREATE TABLE IF NOT EXISTS task_tags (
-    task_id INT NOT NULL,
-    tag_id INT NOT NULL,
+    task_id INT REFERENCES tasks(id) ON DELETE CASCADE ON UPDATE CASCADE NOT NULL,
+    tag_id INT REFERENCES tags(id) ON DELETE CASCADE ON UPDATE CASCADE NOT NULL,
 
-    CONSTRAINT task_tag_fk FOREIGN KEY (task_id) REFERENCES tasks(id) ON DELETE CASCADE,
-    CONSTRAINT tag_task_fk FOREIGN KEY (tag_id) REFERENCES tags(id) ON DELETE CASCADE,
     PRIMARY KEY (task_id, tag_id)
 );
 
