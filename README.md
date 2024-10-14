@@ -20,6 +20,11 @@
 - **CDI (Contexts and Dependency Injection)**: For managing bean lifecycles and dependencies.
 - **JSP (Java Server Pages)**: Used as a front-end.
 
+## Tutorials Used
+
+- [Creating and Deploying Java Web Applications using Maven and Tomcat](https://medium.com/@AlexanderObregon/creating-and-deploying-java-web-applications-using-maven-and-tomcat-d5cb9a81824a). By Alexander Obregon.
+- [Hibernate Tutorial For Beginners](https://www.digitalocean.com/community/tutorials/hibernate-tutorial-for-beginners). By Pankaj.
+
 ## Getting Started
 
 ### Prerequisites
