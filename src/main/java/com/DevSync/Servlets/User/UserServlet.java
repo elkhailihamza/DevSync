@@ -36,27 +36,24 @@ public class UserServlet extends HttpServlet {
             return;
         }
 
-        switch (pathInfo) {
-            case "/list":
-                request.setAttribute("contentPage", "/WEB-INF/Views/User/UserList.jsp");
-                List<Utilisateur> users = utilisateurController.getAllUsers();
-                request.setAttribute("UserList", users);
-                break;
-            case "/update":
-                long userId = Long.parseLong(request.getParameter("id"));
-                Utilisateur selectedUser = utilisateurController.getCertainUser(userId);
+        //            case "/list":
+        //                request.setAttribute("contentPage", "/WEB-INF/Views/User/UserList.jsp");
+        //                List<Utilisateur> users = utilisateurController.getAllUsers();
+        //                request.setAttribute("UserList", users);
+        //                break;
+        if (pathInfo.equals("/update")) {
+            long userId = Long.parseLong(request.getParameter("id"));
+            Utilisateur selectedUser = utilisateurController.getCertainUser(userId);
 
-                if (selectedUser == null) {
-                    response.sendError(HttpServletResponse.SC_NOT_FOUND, "User not found");
-                    return;
-                }
+            if (selectedUser == null) {
+                response.sendError(HttpServletResponse.SC_NOT_FOUND, "User not found");
+                return;
+            }
 
-                request.setAttribute("contentPage", "/WEB-INF/Views/User/UserUpdate.jsp");
-                request.setAttribute("selectedUser", selectedUser);
-                break;
-            default:
-                response.sendRedirect(request.getContextPath());
-                break;
+            request.setAttribute("contentPage", "/WEB-INF/Views/User/UserUpdate.jsp");
+            request.setAttribute("selectedUser", selectedUser);
+        } else {
+            response.sendRedirect(request.getContextPath());
         }
 
         request.getRequestDispatcher("/WEB-INF/app.jsp").forward(request, response);

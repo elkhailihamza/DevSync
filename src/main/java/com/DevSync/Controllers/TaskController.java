@@ -1,6 +1,7 @@
 package com.DevSync.Controllers;
 
 import com.DevSync.Entities.Task;
+import com.DevSync.Entities.Utilisateur;
 import com.DevSync.Enums.Status;
 import jakarta.enterprise.context.RequestScoped;
 
@@ -16,6 +17,10 @@ public class TaskController extends Controller {
 
     public List<Task> getUserTasks(long id) {
         return taskService.fetchUserCreatedTasks(id);
+    }
+
+    public List<Task> fetchAllTasks() {
+        return taskService.fetchAll();
     }
 
     public Task getTaskById(long id) {
@@ -62,5 +67,12 @@ public class TaskController extends Controller {
 
     public void deleteTask(Task task) {
         taskService.delete(task);
+    }
+
+    public void assignTaskToUser(long taskId, Utilisateur user, boolean assignedByManager) {
+        Task task = taskService.findById(taskId);
+        task.setAssignee(user);
+        task.setAssignedByManager(assignedByManager);
+        taskService.update(task);
     }
 }

@@ -1,6 +1,7 @@
 package com.DevSync.Repositories;
 
 import com.DevSync.Entities.Task;
+import com.DevSync.Entities.Utilisateur;
 
 import java.util.List;
 

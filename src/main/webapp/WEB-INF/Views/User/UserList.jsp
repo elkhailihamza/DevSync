@@ -1,18 +1,19 @@
 <%@ page import="java.util.List" %>
 <%@ page import="com.DevSync.Entities.Utilisateur" %>
+<%@ page import="com.DevSync.Entities.Task" %>
 
 <%
   @SuppressWarnings("unchecked")
   List<Utilisateur> userList = (List<Utilisateur>) request.getAttribute("UserList");
   int i = 1;
   long userId = (long) session.getAttribute("userId");
+  Task task = (Task) request.getAttribute("task");
 %>
 
 
 <div class="h-screen w-screen flex flex-col gap-4 justify-center items-center">
-  <%
-    if (userList != null && !userList.isEmpty() && userList.size() > 1) {
-  %>
+  <%if (userList != null && !userList.isEmpty() && userList.size() > 1) {%>
+  <h1>Assign user to task n: <%= task.getId() %></h1>
   <div class="relative overflow-x-auto shadow-md sm:rounded-lg">
     <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
       <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
@@ -52,19 +53,28 @@
         </td>
         <td class="px-6 py-4">
           <div class="flex justify-between items-center gap-4" style="display: flex; justify-content: space-between">
-            <a href="${pageContext.request.contextPath}/users/update?id=<%=user.getId()%>" class="bg-green-500 hover:bg-green-700 transition-all p-1 rounded-md">
-              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M20 14.66V20a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h5.34"></path>
-                <polygon points="18 2 22 6 12 16 8 16 8 12 18 2"></polygon>
-              </svg>
-            </a>
+              <form action="${pageContext.request.contextPath}/tasks/assign" method="post">
+                <input type="hidden" name="taskId" value="<%= task.getId() %>" />
+                <input type="hidden" name="userId" value="<%= user.getId() %>" />
+                <input type="hidden" name="_method" value="ASSIGN" />
+                <button class="task bg-blue-500 hover:bg-blue-700 transition-all p-1 rounded-md">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg>
+                </button>
+              </form>
 
-            <form action="${pageContext.request.contextPath}/users/delete?id=<%= user.getId() %>" method="post">
-              <input hidden name="_method" value="DELETE">
-              <button class="bg-red-500 hover:bg-red-700 transition-all p-1 rounded-md">
-                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="15" y1="9" x2="9" y2="15"></line><line x1="9" y1="9" x2="15" y2="15"></line></svg>
-              </button>
-            </form>
+              <a href="${pageContext.request.contextPath}/users/update?id=<%=user.getId()%>" class="bg-green-500 hover:bg-green-700 transition-all p-1 rounded-md">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M20 14.66V20a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h5.34"></path>
+                  <polygon points="18 2 22 6 12 16 8 16 8 12 18 2"></polygon>
+                </svg>
+              </a>
+
+              <form action="${pageContext.request.contextPath}/users/delete?id=<%= user.getId() %>" method="post">
+                <input type="hidden" name="_method" value="DELETE">
+                <button class="bg-red-500 hover:bg-red-700 transition-all p-1 rounded-md">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="15" y1="9" x2="9" y2="15"></line><line x1="9" y1="9" x2="15" y2="15"></line></svg>
+                </button>
+              </form>
           </div>
         </td>
       </tr>

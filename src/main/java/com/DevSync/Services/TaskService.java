@@ -1,6 +1,7 @@
 package com.DevSync.Services;
 
 import com.DevSync.Entities.Task;
+import com.DevSync.Entities.Utilisateur;
 import com.DevSync.Repositories.TaskRepository;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;

@@ -27,7 +27,7 @@ public class TaskRepositoryImpl implements TaskRepository {
     @Override
     public List<Task> fetchAll() {
         try (Session session = sessionFactory.openSession()) {
-            Query<Task> query = session.createQuery("FROM Task", Task.class);
+            Query<Task> query = session.createQuery("FROM Task ", Task.class);
             return query.list();
         }
     }
@@ -40,10 +40,8 @@ public class TaskRepositoryImpl implements TaskRepository {
             session.persist(entity);
             transaction.commit();
         } catch (Exception e) {
-            if (transaction != null){
+            if (transaction != null)
                 transaction.rollback();
-            }
-            e.printStackTrace();
         }
     }
 

@@ -36,7 +36,7 @@ public class Task {
     @JoinColumn(name = "creator_id", nullable = false)
     private Utilisateur creator;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "assignee_id")
     private Utilisateur assignee;
 
@@ -47,6 +47,9 @@ public class Task {
             inverseJoinColumns = @JoinColumn(name = "tag_id")
     )
     private List<Tag> tags;
+
+    @Column(name = "assigned_by_manager", nullable = false)
+    private Boolean assignedByManager;
 
     public long getId() {
         return id;
@@ -108,7 +111,7 @@ public class Task {
         return assignee;
     }
 
-    public void setAssignee_id(Utilisateur assignee) {
+    public void setAssignee(Utilisateur assignee) {
         this.assignee = assignee;
     }
 
@@ -118,5 +121,13 @@ public class Task {
 
     public void setTags(List<Tag> tags) {
         this.tags = tags;
+    }
+
+    public boolean isAssignedByManager() {
+        return assignedByManager;
+    }
+
+    public void setAssignedByManager(boolean assignedByManager) {
+        this.assignedByManager = assignedByManager;
     }
 }
