@@ -9,7 +9,7 @@ import java.util.List;
 @Entity
 @Table(name = "tasks",
 uniqueConstraints = {@UniqueConstraint(columnNames = {"id"})})
-public class Tasks {
+public class Task {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -34,11 +34,11 @@ public class Tasks {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "creator_id", nullable = false)
-    private Utilisateurs creator;
+    private Utilisateur creator;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "assignee_id")
-    private Utilisateurs assignee;
+    private Utilisateur assignee;
 
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
@@ -46,7 +46,10 @@ public class Tasks {
             joinColumns = @JoinColumn(name = "task_id"),
             inverseJoinColumns = @JoinColumn(name = "tag_id")
     )
-    private List<Tags> tags;
+    private List<Tag> tags;
+
+    @Column(name = "assigned_by_manager", nullable = false)
+    private Boolean assignedByManager;
 
     public long getId() {
         return id;
@@ -96,27 +99,35 @@ public class Tasks {
         this.status = status;
     }
 
-    public Utilisateurs getCreator() {
+    public Utilisateur getCreator() {
         return creator;
     }
 
-    public void setCreator(Utilisateurs creator) {
+    public void setCreator(Utilisateur creator) {
         this.creator = creator;
     }
 
-    public Utilisateurs getAssignee() {
+    public Utilisateur getAssignee() {
         return assignee;
     }
 
-    public void setAssignee_id(Utilisateurs assignee) {
+    public void setAssignee(Utilisateur assignee) {
         this.assignee = assignee;
     }
 
-    public List<Tags> getTags() {
+    public List<Tag> getTags() {
         return tags;
     }
 
-    public void setTags(List<Tags> tags) {
+    public void setTags(List<Tag> tags) {
         this.tags = tags;
+    }
+
+    public boolean isAssignedByManager() {
+        return assignedByManager;
+    }
+
+    public void setAssignedByManager(boolean assignedByManager) {
+        this.assignedByManager = assignedByManager;
     }
 }

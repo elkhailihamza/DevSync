@@ -23,6 +23,7 @@ CREATE TABLE IF NOT EXISTS tasks(
 	status status_enum NOT NULL,
 	creator_id INT NOT NULL,
 	assignee_id INT,
+	assignedByManager BOOLEAN NOT NULL DEFAULT false,
 
 	CONSTRAINT start_before_end CHECK (createdAt < dueDate),
 	CONSTRAINT creator_fk FOREIGN KEY (creator_id) REFERENCES utilisateurs(id),
@@ -35,10 +36,11 @@ CREATE TABLE IF NOT EXISTS tags(
 	tag_name VARCHAR(255) UNIQUE NOT NULL
 );
 
-CREATE TABLE IF NOT EXISTS task_tags(
-	task_id INT NOT NULL,
-	tag_id INT NOT NULL,
+CREATE TABLE IF NOT EXISTS task_tags (
+    task_id INT NOT NULL,
+    tag_id INT NOT NULL,
 
-	CONSTRAINT task_fk FOREIGN KEY (task_id) REFERENCES tasks(id),
-	CONSTRAINT tag_id FOREIGN KEY (tag_id) REFERENCES tags(id)
+    CONSTRAINT task_tag_fk FOREIGN KEY (task_id) REFERENCES tasks(id) ON DELETE CASCADE,
+    CONSTRAINT tag_task_fk FOREIGN KEY (tag_id) REFERENCES tags(id) ON DELETE CASCADE,
+    PRIMARY KEY (task_id, tag_id)
 );

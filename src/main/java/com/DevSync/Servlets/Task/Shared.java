@@ -1,7 +1,7 @@
 package com.DevSync.Servlets.Task;
 
-import com.DevSync.Entities.Tasks;
-import com.DevSync.Entities.Utilisateurs;
+import com.DevSync.Entities.Task;
+import com.DevSync.Entities.Utilisateur;
 import com.DevSync.Enums.Status;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
@@ -9,16 +9,16 @@ import jakarta.servlet.http.HttpSession;
 import java.time.LocalDateTime;
 
 public class Shared {
-    public static Tasks assignValuesToTask(HttpServletRequest request) {
+    public static Task assignValuesToTask(HttpServletRequest request) {
         HttpSession session = request.getSession();
-        Tasks task = new Tasks();
+        Task task = new Task();
 
         if (request.getParameter("id") != null) {
             long taskId = Long.parseLong(request.getParameter("id"));
             task.setId(taskId);
         }
         
-        task.setCreator((Utilisateurs) session.getAttribute("user"));
+        task.setCreator((Utilisateur) session.getAttribute("user"));
         task.setTitle(request.getParameter("task_name"));
         task.setDescription(request.getParameter("task_description"));
         String createdAt = request.getParameter("task_createdAT");

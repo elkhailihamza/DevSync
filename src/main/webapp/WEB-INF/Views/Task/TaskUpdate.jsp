@@ -1,14 +1,14 @@
 <%@ page import="java.util.List" %>
-<%@ page import="com.DevSync.Entities.Tasks" %>
+<%@ page import="com.DevSync.Entities.Task" %>
 <%
     @SuppressWarnings("unchecked")
     List<String> statusList = (List<String>) request.getAttribute("statusList");
-    Tasks selectedTask = (Tasks) request.getAttribute("selectedTask");
+    Task selectedTask = (Task) request.getAttribute("selectedTask");
     @SuppressWarnings("unchecked")
     String jsonArray = (String) request.getAttribute("tagList");
 %>
 
-<div class="h-screen flex flex-col gap-4 justify-center items-center">
+<div style="margin-top: 70px" class="h-screen flex flex-col gap-4 justify-center items-center">
     <div class="w-full text-center">
         <h2 class="text-2xl"><%= selectedTask.getTitle() %></h2>
     </div>

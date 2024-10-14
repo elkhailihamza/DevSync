@@ -2,8 +2,10 @@ package com.DevSync.Servlets.Task;
 
 import com.DevSync.Controllers.TagController;
 import com.DevSync.Controllers.TaskController;
-import com.DevSync.Entities.Tags;
-import com.DevSync.Entities.Tasks;
+import com.DevSync.Controllers.UtilisateurController;
+import com.DevSync.Entities.Tag;
+import com.DevSync.Entities.Task;
+import com.DevSync.Entities.Utilisateur;
 import com.google.gson.Gson;
 import jakarta.inject.Inject;
 import jakarta.servlet.ServletException;
@@ -25,13 +27,14 @@ public class TaskServlet extends HttpServlet {
     @Inject
     private TaskController taskController;
     @Inject
+    private UtilisateurController utilisateurController;
+    @Inject
     private TagController tagController;
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         HttpSession session = request.getSession();
         String username = (String) session.getAttribute("username");
-        long userId = (long) session.getAttribute("userId");
 
         if (username == null) {
             response.sendRedirect(request.getContextPath() + "/login");
@@ -47,14 +50,14 @@ public class TaskServlet extends HttpServlet {
 
         switch (pathInfo) {
             case "/list":
-                List<Tasks> tasks = taskController.getUserTasks(userId);
+                List<Task> tasks = taskController.fetchAllTasks();
 
                 request.setAttribute("contentPage", "/WEB-INF/Views/Task/TaskList.jsp");
                 request.setAttribute("TaskList", tasks);
                 break;
             case "/update":
                 long taskId = Long.parseLong(request.getParameter("id"));
-                Tasks selectedTask = taskController.getTaskById(taskId);
+                Task selectedTask = taskController.getTaskById(taskId);
 
                 if (selectedTask == null) {
                     response.sendError(HttpServletResponse.SC_NOT_FOUND, "Task not found");
@@ -63,8 +66,8 @@ public class TaskServlet extends HttpServlet {
 
                 request.setAttribute("selectedTask", selectedTask);
                 if (!selectedTask.getTags().isEmpty()) {
-                    List<Tags> tags = selectedTask.getTags();
-                    List<String> tagNames = tags.stream().map(Tags::getTag_name).collect(Collectors.toList());
+                    List<Tag> tags = selectedTask.getTags();
+                    List<String> tagNames = tags.stream().map(Tag::getTag_name).collect(Collectors.toList());
                     Gson gson = new Gson();
                     String jsonTagArray = gson.toJson(tagNames);
                     request.setAttribute("tagList", jsonTagArray);
@@ -77,17 +80,30 @@ public class TaskServlet extends HttpServlet {
                 setCommonAttributes(request, null);
                 request.setAttribute("contentPage", "/WEB-INF/Views/Task/TaskCreate.jsp");
                 break;
+            case "/assign":
+                request.setAttribute("contentPage", "/WEB-INF/Views/User/UserList.jsp");
+                List<Utilisateur> users = utilisateurController.getAllUsers();
+                Task task = taskController.getTaskById(Long.parseLong(request.getParameter("id")));
+                if (task == null || users == null) {
+                    response.sendRedirect(request.getContextPath()+"/tasks/list");
+                }
+
+                request.setAttribute("UserList", users);
+                request.setAttribute("task", task);
+                break;
         }
 
         request.getRequestDispatcher("/WEB-INF/app.jsp").forward(request, response);
     }
 
     @Override
-    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
+    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
         HttpSession session = request.getSession();
         String method = request.getParameter("_method");
         long taskId;
-        Tasks task;
+        long userId;
+        Task task;
+        Utilisateur user;
 
         switch (method) {
             case "CREATE":
@@ -102,15 +118,15 @@ public class TaskServlet extends HttpServlet {
                 }
 
                 String[] tags = request.getParameterValues("tags[]");
-                List<Tags> tagList = new ArrayList<>();
+                List<Tag> tagList = new ArrayList<>();
 
                 if (tags != null && tags.length >= 3) {
                     for (String tag : tags) {
-                        Tags existingTag = tagController.findByName(tag);
+                        Tag existingTag = tagController.findByName(tag);
                         if (existingTag != null) {
                             tagList.add(existingTag);
                         } else {
-                            Tags newTag = new Tags();
+                            Tag newTag = new Tag();
                             newTag.setTag_name(tag);
                             tagController.saveTag(newTag);
                             tagList.add(newTag);
@@ -131,11 +147,34 @@ public class TaskServlet extends HttpServlet {
                 }
                 break;
             case "DELETE":
-                    task = new Tasks();
+                    task = new Task();
                     taskId = Long.parseLong(request.getParameter("id"));
                     task.setId(taskId);
                     taskController.deleteTask(task);
                     session.setAttribute("successMessage", "Task successfully deleted!");
+                break;
+            case "ASSIGN":
+                boolean assignedByManager = false;
+                user = (Utilisateur) session.getAttribute("user");
+                if (request.getParameter("taskId") == null) {
+                    response.sendRedirect(request.getContextPath()+"/tasks/list");
+                }
+
+                if (user.isManager()) {
+                    assignedByManager = true;
+                }
+
+                taskId = Long.parseLong(request.getParameter("taskId"));
+
+                if (request.getParameter("userId") != null) {
+                    userId = Long.parseLong(request.getParameter("userId"));
+                    user = utilisateurController.getCertainUser(userId);
+                } else {
+                    user = (Utilisateur) session.getAttribute("user");
+                }
+
+                taskController.assignTaskToUser(taskId, user, assignedByManager);
+                session.setAttribute("successMessage", "Task successfully assigned!");
                 break;
         }
 

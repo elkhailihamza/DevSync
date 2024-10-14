@@ -13,8 +13,6 @@
 </head>
 <body>
     <jsp:include page="/WEB-INF/Views/Components/_navbar.jsp" />
-    <div style="margin-top: 65px">
-        <jsp:include page="${contentPage}" />
-    </div>
+    <jsp:include page="${contentPage}" />
 </body>
 </html>
