@@ -14,7 +14,6 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
-import org.hibernate.Hibernate;
 
 import java.io.IOException;
 import java.time.Duration;
@@ -36,9 +35,9 @@ public class TaskServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         HttpSession session = request.getSession();
-        String username = (String) session.getAttribute("username");
+        Utilisateur user = (Utilisateur) session.getAttribute("user");
 
-        if (username == null) {
+        if (user.getUser_name() == null) {
             response.sendRedirect(request.getContextPath() + "/login");
             return;
         }
@@ -83,6 +82,11 @@ public class TaskServlet extends HttpServlet {
                 request.setAttribute("contentPage", "/WEB-INF/Views/Task/TaskCreate.jsp");
                 break;
             case "/assign":
+                if (!user.isManager()) {
+                    session.setAttribute("errorMessage", "You have to be manager in order for you to do that!");
+                    response.sendRedirect(request.getContextPath()+"/tasks/list");
+                    return;
+                }
                 request.setAttribute("contentPage", "/WEB-INF/Views/User/UserList.jsp");
                 List<Utilisateur> users = utilisateurController.getAllUsers();
                 Task task = taskController.getTaskById(Long.parseLong(request.getParameter("id")));
