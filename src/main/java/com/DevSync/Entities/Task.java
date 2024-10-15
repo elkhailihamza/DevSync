@@ -48,8 +48,14 @@ public class Task {
     )
     private List<Tag> tags;
 
-    @Column(name = "assignedbymanager", nullable = false)
-    private Boolean assignedByManager = false;
+    @Column(name = "managerapproved", nullable = false)
+    private boolean managerApproved;
+
+    @Column(name = "isreplaceable", nullable = false)
+    private boolean isReplaceable;
+
+    @Column (name = "replacementdate", nullable = false)
+    private LocalDateTime replacementDate;
 
     public long getId() {
         return id;
@@ -123,11 +129,31 @@ public class Task {
         this.tags = tags;
     }
 
-    public boolean isAssignedByManager() {
-        return assignedByManager;
+    public boolean isManagerApproved() {
+        return managerApproved;
     }
 
-    public void setAssignedByManager(boolean assignedByManager) {
-        this.assignedByManager = assignedByManager;
+    public void setManagerApproved(boolean managerApproved) {
+        this.managerApproved = managerApproved;
+    }
+
+    public boolean isReplaceable() {
+        return isReplaceable;
+    }
+
+    public void setReplaceable(boolean replaceable) {
+        isReplaceable = replaceable;
+    }
+
+    public LocalDateTime getReplacementDate() {
+        return replacementDate;
+    }
+
+    public void setReplacementDate(LocalDateTime replacementDate) {
+        this.replacementDate = replacementDate;
+    }
+
+    public boolean canBeModifiedByToken() {
+        return !managerApproved && isReplaceable;
     }
 }

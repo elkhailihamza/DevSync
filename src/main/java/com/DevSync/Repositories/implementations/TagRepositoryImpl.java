@@ -33,7 +33,7 @@ public class TagRepositoryImpl implements TagRepository {
     }
 
     @Override
-    public void save(Tag entity) {
+    public Tag save(Tag entity) {
         Transaction transaction = null;
         try (Session session = sessionFactory.openSession()) {
             transaction = session.beginTransaction();
@@ -43,10 +43,11 @@ public class TagRepositoryImpl implements TagRepository {
             if (transaction != null)
                 transaction.rollback();
         }
+        return entity;
     }
 
     @Override
-    public void update(Tag entity) {
+    public Tag update(Tag entity) {
         Transaction transaction = null;
 
         try (Session session = sessionFactory.openSession()) {
@@ -57,6 +58,7 @@ public class TagRepositoryImpl implements TagRepository {
             if (transaction != null)
                 transaction.rollback();
         }
+        return entity;
     }
 
     @Override

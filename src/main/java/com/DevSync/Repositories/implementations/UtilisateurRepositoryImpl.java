@@ -33,7 +33,7 @@ public class UtilisateurRepositoryImpl implements UtilisateurRepository {
     }
 
     @Override
-    public void save(Utilisateur entity) {
+    public Utilisateur save(Utilisateur entity) {
         Transaction transaction = null;
         try (Session session = sessionFactory.openSession()) {
             transaction = session.beginTransaction();
@@ -43,10 +43,11 @@ public class UtilisateurRepositoryImpl implements UtilisateurRepository {
             if (transaction != null)
                 transaction.rollback();
         }
+        return entity;
     }
 
     @Override
-    public void update(Utilisateur entity) {
+    public Utilisateur update(Utilisateur entity) {
         Transaction transaction = null;
 
         try (Session session = sessionFactory.openSession()) {
@@ -57,6 +58,7 @@ public class UtilisateurRepositoryImpl implements UtilisateurRepository {
             if (transaction != null)
                 transaction.rollback();
         }
+        return entity;
     }
 
     @Override

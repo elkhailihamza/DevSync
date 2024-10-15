@@ -69,10 +69,12 @@ public class TaskController extends Controller {
         taskService.delete(task);
     }
 
-    public void assignTaskToUser(long taskId, Utilisateur user, boolean assignedByManager) {
+    public void assignTaskToUser(long taskId, Utilisateur user, boolean managerApproved) {
         Task task = taskService.findById(taskId);
         task.setAssignee(user);
-        task.setAssignedByManager(assignedByManager);
+        task.setReplaceable(false);
+        task.setManagerApproved(managerApproved);
+        task.setReplacementDate(LocalDateTime.now());
         taskService.update(task);
     }
 }
