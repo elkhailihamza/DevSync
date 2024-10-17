@@ -1,7 +1,6 @@
 package com.DevSync.Repositories;
 
 import com.DevSync.Entities.Task;
-import com.DevSync.Entities.Utilisateur;
 
 import java.time.LocalDateTime;
 import java.util.List;

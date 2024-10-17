@@ -5,21 +5,23 @@ import com.DevSync.Entities.UserToken;
 import com.DevSync.Entities.Utilisateur;
 import com.DevSync.Repositories.TaskRepository;
 import com.DevSync.Repositories.UserTokenRepository;
-import jakarta.ejb.Schedule;
-import jakarta.ejb.Singleton;
-import jakarta.ejb.Startup;
+import com.DevSync.Repositories.UtilisateurRepository;
+import jakarta.ejb.*;
+import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
+import jakarta.transaction.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
 @Singleton
 @Startup
-public class SchedularService {
+@ApplicationScoped
+public class SchedulerService {
     @Inject
     private TaskRepository taskRepository;
     @Inject
-    private UserTokenRepository userTokenRepository;
+    private UtilisateurRepository utilisateurRepository;
 
     @Schedule(hour = "0/12", persistent = false)
     public void checkPendingRequests() {
@@ -27,20 +29,21 @@ public class SchedularService {
 
         for (Task task : pendingTasks) {
             Utilisateur user = task.getAssignee();
-            UserToken userToken = userTokenRepository.fetchUserToken(user);
+            UserToken userToken = user.getUserTokens();
 
             duplicateTokens(userToken);
-            userTokenRepository.update(userToken);
+            user.setUserTokens(userToken);
+            utilisateurRepository.update(user);
         }
-
     }
 
     @Schedule(second = "*/5", minute = "*", hour = "*", persistent = false)
+    @Transactional
     public void checkOverDueTasks() {
         List<Task> overDueTasks = taskRepository.fetchOverDueTasks(getLocalDateTime());
         overDueTasks.forEach(t -> {
             t.setReplaceable(false);
-            taskRepository.save(t);
+            taskRepository.update(t);
         });
     }
 

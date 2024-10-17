@@ -91,7 +91,7 @@ public class TaskRepositoryImpl implements TaskRepository {
     @Override
     public List<Task> fetchPendingTasks(LocalDateTime now) {
         try (Session session = sessionFactory.openSession()) {
-            return session.createQuery("FROM Task t WHERE t.managerApproved = false AND t.replacementDate IS NOT NULL AND "
+            return session.createQuery("FROM Task t WHERE t.taskRequest.managerApproved = false AND t.replacementDate IS NOT NULL AND "
                             + "t.replacementDate <= :limit", Task.class)
                     .setParameter("limit", now.minusHours(12))
                     .getResultList();
@@ -101,8 +101,9 @@ public class TaskRepositoryImpl implements TaskRepository {
     @Override
     public List<Task> fetchOverDueTasks(LocalDateTime now) {
         try (Session session = sessionFactory.openSession()) {
-            return session.createQuery("FROM Task t WHERE t.dueDate < :date", Task.class)
+            return session.createQuery("FROM Task t WHERE t.dueDate < :date AND t.isReplaceable != :boolean", Task.class)
                     .setParameter("date", now)
+                    .setParameter("boolean", false)
                     .getResultList();
         }
     }
