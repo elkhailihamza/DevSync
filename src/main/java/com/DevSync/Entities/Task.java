@@ -1,6 +1,7 @@
 package com.DevSync.Entities;
 
 import com.DevSync.Enums.Status;
+import jakarta.enterprise.inject.Default;
 import jakarta.persistence.*;
 
 import java.time.LocalDateTime;
@@ -48,8 +49,14 @@ public class Task {
     )
     private List<Tag> tags;
 
-    @Column(name = "assignedbymanager", nullable = false)
-    private Boolean assignedByManager = false;
+    @Column(name = "isreplaceable", nullable = false)
+    private boolean isReplaceable = true;
+
+    @Column (name = "replacementdate", nullable = false)
+    private LocalDateTime replacementDate;
+
+    @OneToOne(mappedBy = "task")
+    private TaskRequest taskRequest;
 
     public long getId() {
         return id;
@@ -123,11 +130,27 @@ public class Task {
         this.tags = tags;
     }
 
-    public boolean isAssignedByManager() {
-        return assignedByManager;
+    public boolean isReplaceable() {
+        return isReplaceable;
     }
 
-    public void setAssignedByManager(boolean assignedByManager) {
-        this.assignedByManager = assignedByManager;
+    public void setReplaceable(boolean replaceable) {
+        isReplaceable = replaceable;
+    }
+
+    public LocalDateTime getReplacementDate() {
+        return replacementDate;
+    }
+
+    public void setReplacementDate(LocalDateTime replacementDate) {
+        this.replacementDate = replacementDate;
+    }
+
+    public TaskRequest getTaskRequest() {
+        return taskRequest;
+    }
+
+    public void setTaskRequest(TaskRequest taskRequest) {
+        this.taskRequest = taskRequest;
     }
 }

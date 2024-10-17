@@ -43,36 +43,35 @@ public class TaskController extends Controller {
                 .collect(Collectors.toList());
     }
 
-    public String[] saveTask(Task task) {
+    public void saveTask(Task task) {
         if (task.getCreatedAt().toLocalDate().isBefore(LocalDate.parse(getLocalDate())))
-            return new String[]{"errorMessage", "Task date can't be before today's!"};
+            return;
 
         else if (task.getCreatedAt().isAfter(task.getDueDate()))
-            return new String[]{"errorMessage", "Task date can't be after due date!"};
+            return;
 
         taskService.save(task);
-        return new String[]{"successMessage", "Task created successfully!"};
     }
 
-    public String[] updateTask(Task task) {
+    public void updateTask(Task task) {
         if (task.getCreatedAt().toLocalDate().isBefore(LocalDate.parse(getLocalDate())))
-            return new String[]{"errorMessage", "Task date can't be before today's!"};
+            return;
 
         else if (task.getCreatedAt().isAfter(task.getDueDate()))
-            return new String[]{"errorMessage", "Task date can't be after due date!"};
+            return;
 
         taskService.update(task);
-        return new String[]{"successMessage", "Task updated successfully!"};
     }
 
     public void deleteTask(Task task) {
         taskService.delete(task);
     }
 
-    public void assignTaskToUser(long taskId, Utilisateur user, boolean assignedByManager) {
+    public void assignTaskToUser(long taskId, Utilisateur user) {
         Task task = taskService.findById(taskId);
         task.setAssignee(user);
-        task.setAssignedByManager(assignedByManager);
+        task.setReplaceable(false);
+        task.setReplacementDate(LocalDateTime.now());
         taskService.update(task);
     }
 }

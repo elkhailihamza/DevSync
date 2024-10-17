@@ -20,7 +20,7 @@
             int deleteTokens = user.getUserTokens().getMonthlyDeletionTokens();
             int i = 1;
     %>
-    <div class="relative overflow-x-auto shadow-md sm:rounded-lg">
+    <div class="relative overflow-auto shadow-md sm:rounded-lg">
         <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
             <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
             <tr>
@@ -37,6 +37,9 @@
             <tbody>
             <%
                 for (Task task : taskList) {
+                    boolean userIsCreator = Objects.equals(task.getCreator().getId(), user.getId());
+                    boolean userIsAssignee = task.getAssignee() != null && Objects.equals(task.getAssignee().getId(), user.getId());
+                    boolean taskDueDateBeforeToday = task.getDueDate().isBefore(LocalDateTime.now());
             %>
             <tr class="odd:bg-white odd:dark:bg-gray-900 even:bg-gray-50 even:dark:bg-gray-800 border-b dark:border-gray-700">
                 <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
@@ -56,7 +59,7 @@
                 </td>
                 <td class="px-6 py-4">
                     <select data-id="<%= task.getId() %>" name="task_status" class="status_select p-1 border text-sm rounded"
-                            <%= task.getDueDate().isBefore(LocalDateTime.now()) ? "disabled" : "" %> >
+                            <%= taskDueDateBeforeToday || !userIsAssignee ? "disabled" : "" %> >
                         <%
                             for (String s : statusList) {
                         %>
@@ -84,41 +87,73 @@
                     %>
                 </td>
                 <td class="px-6 py-4">
-                    <div class="gap-4 flex justify-between items-center">
-                        <%if (user.isManager() || task.getAssignee() == null) {%>
-                            <form action="${pageContext.request.contextPath}/tasks/assign" method="post">
-                                <input type="hidden" name="taskId" value="<%= task.getId() %>" />
-                                <button class="task bg-blue-500 hover:bg-blue-700 transition-all p-1 rounded-md">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg>
-                                </button>
-                            </form>
-                        <% }
-                            if (user.isManager()) { %>
-                            <a href="${pageContext.request.contextPath}/tasks/assign?id=<%= task.getId() %>" class="task bg-red-500 hover:bg-red-700 transition-all p-1 rounded-md">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg>
-                            </a>
-                        <% }
-                            boolean userIsCreator = Objects.equals(task.getCreator().getId(), user.getId());
-                            boolean userIsAssignee = Objects.equals(task.getAssignee().getId(), user.getId());
-                            if (user.isManager() || userIsCreator || userIsAssignee) {
+                    <button id="dropdownDefaultButton" data-dropdown-toggle="dropdown<%= task.getId() %>" class="rounded-lg hover:bg-gray-100 transition-all text-sm p-2 text-center inline-flex items-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800" type="button">
+                        <svg fill="#000000" height="20px" width="20px" xmlns="http://www.w3.org/2000/svg"
+                             viewBox="0 0 32.055 32.055" xml:space="preserve">
+                        <g>
+                            <path d="M3.968,12.061C1.775,12.061,0,13.835,0,16.027c0,2.192,1.773,3.967,3.968,3.967c2.189,0,3.966-1.772,3.966-3.967
+                                C7.934,13.835,6.157,12.061,3.968,12.061z M16.233,12.061c-2.188,0-3.968,1.773-3.968,3.965c0,2.192,1.778,3.967,3.968,3.967
+                                s3.97-1.772,3.97-3.967C20.201,13.835,18.423,12.061,16.233,12.061z M28.09,12.061c-2.192,0-3.969,1.774-3.969,3.967
+                                c0,2.19,1.774,3.965,3.969,3.965c2.188,0,3.965-1.772,3.965-3.965S30.278,12.061,28.09,12.061z"></path>
+                        </g>
+                        </svg>
+                    </button>
+
+                    <div id="re-assign_container"></div>
+
+                    <div id="dropdown<%= task.getId() %>" class="z-50 absolute hidden bg-white divide-y divide-gray-100 rounded-lg shadow w-44 dark:bg-gray-700">
+                        <ul class="p-4 flex flex-col gap-2 text-sm text-gray-700 dark:text-gray-200" aria-labelledby="dropdownDefaultButton">
+                            <% if (userIsAssignee && !user.isManager() && !userIsCreator && task.isReplaceable()) {
                                 if (updateTokens > 0) {%>
-                                    <a href="${pageContext.request.contextPath}/tasks/update?id=<%=task.getId()%>" class="bg-green-500 hover:bg-green-700 transition-all p-1 rounded-md">
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                            <path d="M20 14.66V20a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h5.34"></path>
-                                            <polygon points="18 2 22 6 12 16 8 16 8 12 18 2"></polygon>
-                                        </svg>
-                                    </a>
-                        <%      }
-                                if (deleteTokens > 0) {%>
-                                    <form action="${pageContext.request.contextPath}/tasks/delete?id=<%=task.getId()%>" method="post">
-                                        <input type="hidden" name="_method" value="DELETE" />
-                                        <button class="bg-red-500 hover:bg-red-700 transition-all p-1 rounded-md">
-                                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="15" y1="9" x2="9" y2="15"></line><line x1="9" y1="9" x2="15" y2="15"></line></svg>
+                                    <li>
+                                        <a class="re-assign_button" data-id="<%= task.getId() %>">Ask to Re-assign task</a>
+                                    </li>
+                                    <% }
+                                        if (deleteTokens > 0) {%>
+                                    <li>
+                                        <form action="${pageContext.request.contextPath}/tasks/delete?id=<%=task.getId()%>" method="post">
+                                            <input type="hidden" name="_method" value="DELETE" />
+                                            <button class="bg-gray-100 hover:bg-gray-200 w-full transition-all p-1 rounded-sm">
+                                                <span>Ask to Delete task</span>
+                                            </button>
+                                        </form>
+                                    </li>
+                            <%  }
+                            }
+                                if (user.isManager() && !userIsAssignee || task.getAssignee() == null) {%>
+                                <li>
+                                    <form action="${pageContext.request.contextPath}/tasks/assign" method="post">
+                                        <input type="hidden" name="taskId" value="<%= task.getId() %>" />
+                                        <button class="task bg-gray-100 hover:bg-blue-500 hover:text-white w-full transition-all p-1 rounded-sm">
+                                            <span>Assign to self</span>
                                         </button>
                                     </form>
-                        <%      }
-                            }
-                        %>
+                                </li>
+                            <%}%>
+                            <% if (user.isManager() && userIsCreator) { %>
+                                <li>
+                                    <a href="${pageContext.request.contextPath}/tasks/assign?id=<%= task.getId() %>" class="task bg-gray-100 hover:bg-blue-500 hover:text-white text-center w-full transition-all p-1 rounded-sm block">
+                                        <span>Assign to someone else</span>
+                                    </a>
+                                </li>
+                            <% } %>
+
+                            <% if (userIsCreator || user.isManager()) {%>
+                                <li class="text-center">
+                                    <a href="${pageContext.request.contextPath}/tasks/update?id=<%=task.getId()%>" class="bg-gray-100 hover:bg-green-800 hover:text-white w-full transition-all p-1 rounded-sm block">
+                                        Update task
+                                    </a>
+                                </li>
+                                <li>
+                                    <form action="${pageContext.request.contextPath}/tasks/delete?id=<%=task.getId()%>" method="post">
+                                        <input type="hidden" name="_method" value="DELETE" />
+                                        <button class="bg-red-600 hover:bg-red-800 text-white w-full transition-all p-1 rounded-sm">
+                                            <span>Delete task</span>
+                                        </button>
+                                    </form>
+                                </li>
+                            <%}%>
+                        </ul>
                     </div>
                 </td>
             </tr>
@@ -148,3 +183,4 @@
     const contextPath = '<%= request.getContextPath() %>';
 </script>
 <script src="${pageContext.request.contextPath}/js/SelectStatus.js"></script>
+<script src="${pageContext.request.contextPath}/js/ReAssignTask.js"></script>

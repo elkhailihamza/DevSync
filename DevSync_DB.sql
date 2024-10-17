@@ -23,7 +23,8 @@ CREATE TABLE IF NOT EXISTS tasks(
 	status status_enum NOT NULL,
 	creator_id INT REFERENCES utilisateurs(id) ON DELETE CASCADE ON UPDATE CASCADE NOT NULL,
 	assignee_id INT REFERENCES utilisateurs(id) ON DELETE CASCADE ON UPDATE CASCADE,
-	assignedbymanager BOOLEAN NOT NULL DEFAULT false,
+	isreplaceable BOOLEAN NOT NULL DEFAULT true,
+	replacementdate TIMESTAMP(0) WITHOUT TIME ZONE,
 
 	CONSTRAINT start_before_end CHECK (createdAt < dueDate)
 );
@@ -47,4 +48,13 @@ CREATE TABLE IF NOT EXISTS user_tokens (
     monthly_deletion_tokens INT DEFAULT 1,
     last_reset_date DATE,
     UNIQUE(user_id)
+);
+
+
+CREATE TABLE IF NOT EXISTS task_requests(
+	id SERIAL PRIMARY KEY,
+	task_id INT REFERENCES tasks(id),
+	askRequest VARCHAR(255),
+	managerapproved BOOLEAN,
+	UNIQUE(task_id)
 );
