@@ -17,6 +17,10 @@ const reasonInput = $('<input>', {
     placeholder: 'Reason as to why'
 })
 
+const requestType = $('<select>', {
+
+})
+
 const reasonInputSubmitBtn = $('<button>', {
     type: 'submit',
     innerHTML: 'test'

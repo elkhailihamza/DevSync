@@ -1,5 +1,6 @@
 package com.DevSync.Entities;
 
+import com.DevSync.Enums.Request_type;
 import jakarta.persistence.*;
 
 @Entity
@@ -19,6 +20,10 @@ public class TaskRequest {
 
     @Column(name = "managerapproved")
     private boolean managerApproved;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "request_type", nullable = false)
+    private Request_type type;
 
     public Long getId() {
         return id;
@@ -50,5 +55,13 @@ public class TaskRequest {
 
     public void setManagerApproved(boolean managerApproved) {
         this.managerApproved = managerApproved;
+    }
+
+    public Request_type getType() {
+        return type;
+    }
+
+    public void setType(Request_type type) {
+        this.type = type;
     }
 }
