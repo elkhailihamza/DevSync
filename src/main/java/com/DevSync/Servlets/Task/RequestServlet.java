@@ -17,6 +17,7 @@ import jakarta.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Objects;
 
 @WebServlet("/tasks/request/*")
 public class RequestServlet extends HttpServlet {
@@ -44,24 +45,17 @@ public class RequestServlet extends HttpServlet {
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        String pathInfo = request.getPathInfo();
 
-        if (pathInfo == null) {
-            return;
-        }
+            // THIS METHOD HAS NO CHECKS FOR NULL OR EMPTY INPUTS, GOOD LUCK.
+
+        String pathInfo = request.getPathInfo();
+        String redirectPath = "";
 
         String taskIdStr = request.getParameter("id");
-
-        if (taskIdStr == null) {
-            return;
-        }
 
         long taskId = Long.parseLong(taskIdStr);
         Task task = taskController.getTaskById(taskId);
 
-        if (task == null) {
-            return;
-        }
 
         TaskRequest taskRequest = new TaskRequest();
 
@@ -75,42 +69,43 @@ public class RequestServlet extends HttpServlet {
                     taskRequest.setTask(task);
                     task.setTaskRequest(taskRequest);
                 }
-                taskController.updateTask(task);
-                response.sendRedirect(request.getContextPath()+"/tasks/list");
-                return;
-                case "/accept":
-                String userIdStr = (String) request.getAttribute("userId");
-                long userId = Long.parseLong(userIdStr);
-
-                Utilisateur user = utilisateurController.getCertainUser(userId);
+                redirectPath = "/tasks/list";
+                break;
+            case "/accept":
+                Utilisateur user = task.getAssignee();
                 if (user == null) {
-                    return;
+                    redirectPath = "/tasks/request/list";
+                    break;
                 }
 
                 UserToken userToken = user.getUserTokens();
-                switch (task.getTaskRequest().getType()) {
+                taskRequest = task.getTaskRequest();
+                switch (taskRequest.getType()) {
                     case UPDATE:
                         if (userToken.getDailyUpdateTokens() > 0) {
                             userToken.setDailyUpdateTokens(userToken.getDailyUpdateTokens() - 1);
+                            taskRequest.setManagerApproved(true);
                             utilisateurController.changeUserTokens(userToken, user);
                         }
                         break;
                     case DELETE:
                         if (userToken.getMonthlyDeletionTokens() > 0) {
                             userToken.setMonthlyDeletionTokens(userToken.getMonthlyDeletionTokens() - 1);
+                            taskRequest.setManagerApproved(true);
                             utilisateurController.changeUserTokens(userToken, user);
                         }
                         break;
                 }
+                redirectPath = "/tasks/request/list";
                 break;
             case "/decline":
                 task.getTaskRequest().setManagerApproved(false);
                 task.setTaskRequest(null);
-                taskController.updateTask(task);
+                redirectPath = "/tasks/request/list";
                 break;
         }
 
         taskController.updateTask(task);
-        response.sendRedirect(request.getContextPath()+"/tasks/request/list");
+        response.sendRedirect(request.getContextPath()+redirectPath);
     }
 }

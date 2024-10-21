@@ -55,7 +55,7 @@ public class Task {
     @Column (name = "replacementdate", nullable = false)
     private LocalDateTime replacementDate;
 
-    @OneToOne(mappedBy = "task")
+    @OneToOne(mappedBy = "task",cascade = CascadeType.ALL, orphanRemoval = true)
     private TaskRequest taskRequest;
 
     public long getId() {
