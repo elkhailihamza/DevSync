@@ -9,6 +9,7 @@ import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 import org.hibernate.query.Query;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @ApplicationScoped
@@ -33,7 +34,7 @@ public class TaskRepositoryImpl implements TaskRepository {
     }
 
     @Override
-    public void save(Task entity) {
+    public Task save(Task entity) {
         Transaction transaction = null;
         try (Session session = sessionFactory.openSession()) {
             transaction = session.beginTransaction();
@@ -43,10 +44,11 @@ public class TaskRepositoryImpl implements TaskRepository {
             if (transaction != null)
                 transaction.rollback();
         }
+        return entity;
     }
 
     @Override
-    public void update(Task entity) {
+    public Task update(Task entity) {
         Transaction transaction = null;
         try (Session session = sessionFactory.openSession()) {
             transaction = session.beginTransaction();
@@ -56,6 +58,7 @@ public class TaskRepositoryImpl implements TaskRepository {
             if (transaction != null)
                 transaction.rollback();
         }
+        return entity;
     }
 
     @Override
@@ -79,9 +82,29 @@ public class TaskRepositoryImpl implements TaskRepository {
     @Override
     public List<Task> fetchUserCreatedTasks(long id) {
         try (Session session = sessionFactory.openSession()) {
-            Query<Task> query = session.createQuery("FROM Task WHERE creator.id = :creatorId", Task.class);
-            query.setParameter("creatorId", id);
-            return query.list();
+            return session.createQuery("FROM Task WHERE creator.id = :creatorId", Task.class)
+                    .setParameter("creatorId", id)
+                    .list();
+        }
+    }
+
+    @Override
+    public List<Task> fetchPendingTasks(LocalDateTime now) {
+        try (Session session = sessionFactory.openSession()) {
+            return session.createQuery("FROM Task t WHERE t.taskRequest.managerApproved = false AND t.replacementDate IS NOT NULL AND "
+                            + "t.replacementDate <= :limit", Task.class)
+                    .setParameter("limit", now.minusHours(12))
+                    .getResultList();
+        }
+    }
+
+    @Override
+    public List<Task> fetchOverDueTasks(LocalDateTime now) {
+        try (Session session = sessionFactory.openSession()) {
+            return session.createQuery("FROM Task t WHERE t.dueDate < :date AND t.isReplaceable != :boolean", Task.class)
+                    .setParameter("date", now)
+                    .setParameter("boolean", false)
+                    .getResultList();
         }
     }
 }

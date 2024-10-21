@@ -1,6 +1,7 @@
 package com.DevSync.Controllers;
 
 import com.DevSync.Entities.Task;
+import com.DevSync.Entities.TaskRequest;
 import com.DevSync.Entities.Utilisateur;
 import com.DevSync.Enums.Status;
 import jakarta.enterprise.context.RequestScoped;
@@ -10,6 +11,7 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 @RequestScoped
@@ -43,36 +45,47 @@ public class TaskController extends Controller {
                 .collect(Collectors.toList());
     }
 
-    public String[] saveTask(Task task) {
+    public void saveTask(Task task) {
         if (task.getCreatedAt().toLocalDate().isBefore(LocalDate.parse(getLocalDate())))
-            return new String[]{"errorMessage", "Task date can't be before today's!"};
+            return;
 
         else if (task.getCreatedAt().isAfter(task.getDueDate()))
-            return new String[]{"errorMessage", "Task date can't be after due date!"};
+            return;
 
         taskService.save(task);
-        return new String[]{"successMessage", "Task created successfully!"};
     }
 
-    public String[] updateTask(Task task) {
+    public void updateTask(Task task) {
         if (task.getCreatedAt().toLocalDate().isBefore(LocalDate.parse(getLocalDate())))
-            return new String[]{"errorMessage", "Task date can't be before today's!"};
+            return;
 
         else if (task.getCreatedAt().isAfter(task.getDueDate()))
-            return new String[]{"errorMessage", "Task date can't be after due date!"};
+            return;
 
         taskService.update(task);
-        return new String[]{"successMessage", "Task updated successfully!"};
     }
 
     public void deleteTask(Task task) {
         taskService.delete(task);
     }
 
-    public void assignTaskToUser(long taskId, Utilisateur user, boolean assignedByManager) {
+    public void assignTaskToUser(long taskId, Utilisateur user) {
         Task task = taskService.findById(taskId);
-        task.setAssignee(user);
-        task.setAssignedByManager(assignedByManager);
+        if (task.getAssignee() == null || !task.getAssignee().equals(user)) {
+            task.setAssignee(user);
+
+            if (task.getTaskRequest() != null && task.getTaskRequest().isManagerApproved() && task.isReplaceable()) {
+                task.setReplaceable(false);
+                task.setReplacementDate(LocalDateTime.now());
+            }
+        }
+        taskService.update(task);
+    }
+
+    public void acceptRequest(Task task, String reason) {
+        TaskRequest taskRequest = task.getTaskRequest();
+        taskRequest.setManagerApproved(true);
+        taskRequest.setReason(reason);
         taskService.update(task);
     }
 }

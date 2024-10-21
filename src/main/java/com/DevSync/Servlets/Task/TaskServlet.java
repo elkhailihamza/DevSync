@@ -111,7 +111,6 @@ public class TaskServlet extends HttpServlet {
         HttpSession session = request.getSession();
         Utilisateur user = (Utilisateur) session.getAttribute("user");
         long taskId;
-        long userId;
         Task task;
 
         String pathInfo = request.getPathInfo();
@@ -186,52 +185,11 @@ public class TaskServlet extends HttpServlet {
                 }
                 break;
             case "/assign":
-                boolean assignedByManager = false;
-                user = (Utilisateur) session.getAttribute("user");
-                if (request.getParameter("taskId") == null) {
-                    response.sendRedirect(request.getContextPath()+"/tasks/list");
-                }
-
-                if (user.isManager()) {
-                    assignedByManager = true;
-                }
-
-                taskId = Long.parseLong(request.getParameter("taskId"));
-
-                if (request.getParameter("userId") != null) {
-                    userId = Long.parseLong(request.getParameter("userId"));
-                    user = utilisateurController.getCertainUser(userId);
-                } else {
-                    user = (Utilisateur) session.getAttribute("user");
-                }
-
-                taskController.assignTaskToUser(taskId, user, assignedByManager);
+                assignTaskToUser(request, response, session);
                 session.setAttribute("successMessage", "Task successfully assigned!");
                 break;
             case "/setStatus":
-                taskId = Long.parseLong(request.getParameter("id"));
-                task = taskController.getTaskById(taskId);
-                Gson gson = new Gson();
-
-                if (task != null) {
-                    if (task.getDueDate().isBefore(LocalDateTime.parse(taskController.getLocalDate()))) {
-                        String status = request.getParameter("status");
-                        task.setStatus(Status.fromDBValue(status));
-                        taskController.updateTask(task);
-
-                        String jsonResponse = gson.toJson("Task status updated successfully");
-                        response.setStatus(HttpServletResponse.SC_OK);
-                        response.getWriter().write(jsonResponse);
-                    } else {
-                        response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-                        String jsonResponse = gson.toJson("Due date cannot be!");
-                        response.getWriter().write(jsonResponse);
-                    }
-                } else {
-                    response.setStatus(HttpServletResponse.SC_NOT_FOUND);
-                    String jsonResponse = gson.toJson("Task not found");
-                    response.getWriter().write(jsonResponse);
-                }
+                setTaskStatus(request, response);
                 return;
             default:
                 response.sendError(HttpServletResponse.SC_NOT_FOUND, "Unknown request path.");
@@ -286,6 +244,8 @@ public class TaskServlet extends HttpServlet {
         task.setCreator((Utilisateur) session.getAttribute("user"));
         task.setTitle(request.getParameter("task_name"));
         task.setDescription(request.getParameter("task_description"));
+        task.setStatus(Status.fromDBValue("En attente"));
+        task.setReplaceable(true);
 
         String createdAt = request.getParameter("task_createdAT");
         if (createdAt != null && !createdAt.isEmpty()) {
@@ -301,5 +261,40 @@ public class TaskServlet extends HttpServlet {
         task.setTags(tagList);
 
         return task;
+    }
+
+    private void setTaskStatus(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        long taskId = Long.parseLong(request.getParameter("id"));
+        HttpSession session = request.getSession();
+        Task task = taskController.getTaskById(taskId);
+
+        if (task != null) {
+            if (task.getDueDate().isAfter(LocalDateTime.now()) && task.isReplaceable()) {
+                String status = request.getParameter("status");
+                task.setStatus(Status.fromDBValue(status));
+                taskController.updateTask(task);
+
+                session.setAttribute("successMessage", "Task status updated successfully");
+                response.setStatus(HttpServletResponse.SC_OK);
+            }
+        }
+    }
+
+    private void assignTaskToUser(HttpServletRequest request, HttpServletResponse response, HttpSession session) throws IOException {
+        if (request.getParameter("taskId") == null) {
+            response.sendRedirect(request.getContextPath()+"/tasks/list");
+        }
+
+        long taskId = Long.parseLong(request.getParameter("taskId"));
+        Utilisateur user;
+
+        if (request.getParameter("userId") != null) {
+            long userId = Long.parseLong(request.getParameter("userId"));
+            user = utilisateurController.getCertainUser(userId);
+        } else {
+            user = (Utilisateur) session.getAttribute("user");
+        }
+
+        taskController.assignTaskToUser(taskId, user);
     }
 }
