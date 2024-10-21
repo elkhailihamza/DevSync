@@ -1,5 +1,6 @@
 package com.DevSync.Controllers;
 
+import com.DevSync.Entities.UserToken;
 import com.DevSync.Entities.Utilisateur;
 import jakarta.enterprise.context.RequestScoped;
 import jakarta.servlet.http.HttpSession;
@@ -58,5 +59,10 @@ public class UtilisateurController extends Controller {
 
     public void deleteUser(Utilisateur user) {
         utilisateurService.delete(user);
+    }
+
+    public void changeUserTokens(UserToken tokens, Utilisateur user) {
+        user.setUserTokens(tokens);
+        utilisateurService.update(user);
     }
 }

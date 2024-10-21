@@ -50,11 +50,16 @@ CREATE TABLE IF NOT EXISTS user_tokens (
     UNIQUE(user_id)
 );
 
+CREATE TYPE request_type_enum AS ENUM (
+	'Update',
+	'Delete'
+);
 
 CREATE TABLE IF NOT EXISTS task_requests(
 	id SERIAL PRIMARY KEY,
 	task_id INT REFERENCES tasks(id),
 	askRequest VARCHAR(255),
 	managerapproved BOOLEAN,
+	request_type request_type_enum NOT NULL,
 	UNIQUE(task_id)
 );
