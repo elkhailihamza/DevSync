@@ -64,7 +64,6 @@ We welcome contributions to enhance DevSync. To contribute:
 2. Create a new branch for your feature or bug fix.
 3. Make your changes and commit them.
 4. Push to your branch and create a pull request.
-**Basic reminder**: you will be ignored.
 
 ## License
 
